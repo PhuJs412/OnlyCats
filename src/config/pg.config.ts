@@ -10,3 +10,13 @@ export const pool = new Pool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD
 });
+
+export async function testDbConnection(){
+    try {
+        const res = await pool.query('SELECT NOW()'); //Lấy thời gian hiện tại
+        console.log('Connected db successfully at: ', res.rows[0].now);
+    } catch (error) {
+        console.error('Db connection failed !');
+        console.log('Error: ', error);
+    }
+}

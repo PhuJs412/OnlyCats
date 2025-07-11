@@ -3,18 +3,33 @@ export interface User {
   username: string;
   email: string;
   password: string;
-  bio?: string;
-  gender?: string;
-  dob?: Date;
-  is_private?: boolean;
-  is_verified?: boolean;
-  last_login_at?: Date;
-  avatar_url?: string;
-  background_url?: string;
-  is_abandoned?: boolean;
-  is_deleted?: boolean;
-  created_at?: Date;
-  created_by?: string;
-  updated_at?: Date;
-  updated_by?: string;
+
+  bio?: string | null;
+  gender?: string | null;
+  dob?: string | null;
+
+  is_private?: boolean | null;
+  is_verified?: boolean | null;
+
+  last_login_at?: string | null;
+
+  otp_code?: string | null;
+  otp_expired_at?: string | null;
+
+  failed_login_attempt?: number | null;
+  last_failed_attempt?: string | null;
+
+  is_locked?: boolean | null;
+  locked_at?: string | null;
+
+  avatar_url?: string | null;
+  background_url?: string | null;
+
+  is_abandoned?: boolean | null;
+  is_deleted?: boolean | null;
+
+  created_at?: string | null;
+  created_by?: string | null;
+  updated_at?: string | null;
+  updated_by?: string | null;
 }
