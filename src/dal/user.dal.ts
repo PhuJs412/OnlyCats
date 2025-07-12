@@ -14,8 +14,10 @@ export const getUserById = async (id: string) => {
     return res.rows[0];
 };
 
-export const updateAvatar = async (avatarUrl: string, id: string) => {
-    return await pool.query(sql.updateAvatarSQL, [avatarUrl, id]);
+export const getUserByUsername = async (username: string) => {
+    const name =`%${username}%`;
+    const res = await pool.query(sql.getUserByUsername, [name]);
+    return res.rows;
 };
 
 export const updatePassword = async (hashedPassword: string, id: string) => {
@@ -39,7 +41,7 @@ export const createUser = async (
 export const getUserByEmail = async (
     email: string
 
-): Promise<User> => {
+) => {
     const data = [email];
     const result = await pool.query(sql.getUserByEmailSQL, data);
     return result.rows[0] || null; //Tìm không thấy sẽ trả về null, tránh trả về undefined
@@ -60,3 +62,7 @@ export const saveUser = async (user: UserUpdate, id: string) => {
     //Thực hiện truy vấn, vì tham số không cố định nên giá trị cần bỏ vào ngoặc
     return await pool.query(result, [...values, id]);
 };
+
+export const deleteUser = async (id: string) => {
+    return await pool.query(sql.deleteUser, [id]);
+}

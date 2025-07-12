@@ -7,7 +7,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
         const users = await userService.getAllUsers();
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: (error as Error).message });
     }
 };
 
@@ -29,23 +29,24 @@ export const getUserByEmail = async (req: Request, res: Response) => {
     }
 };
 
+export const searchUserByUsername = async (req: Request, res: Response) => {
+    console.log('a');
+    try {
+        const user = await userService.getUserByUsername(req.params.username);
+        console.log('req.params.username ', req.params.username);
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(404).json({ message: (error as Error).message });
+    }
+};
+
 export const updateUser = async (req: Request, res: Response) => {
     try {
         const User: UserUpdate = req.body;
         await userService.updateUser(User, req.params.id);
         res.status(200).json('updated user successfully !');
     } catch (error) {
-        res.status(500).json({ message: 'Update failed' });
-    }
-};
-
-export const updateAvatar = async (req: Request, res: Response) => {
-    try {
-        const { avatarUrl } = req.body;
-        await userService.updateAvatar(avatarUrl, req.params.id);
-        res.status(200).json('updated user successfully !');
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to update avatar' });
+        res.status(500).json({ message: (error as Error).message });
     }
 };
 
@@ -55,6 +56,16 @@ export const changePassword = async (req: Request, res: Response) => {
         await userService.updatePassword(password, req.params.id);
         res.status(200).json('updated user successfully !');
     } catch (error) {
-        res.status(500).json({ message: 'Failed to update password' });
+        res.status(500).json({ message: (error as Error).message });
+    }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+        await userService.deleteUser(id);
+        res.status(200).json('deleted user successfully !');
+    } catch (error) {
+        res.status(500).json({ message: (error as Error).message });
     }
 };

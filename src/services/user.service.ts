@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 export const getAllUsers = async () => {
     const users = await userDAL.getUsers();
-    if (!users) throw new Error('No account is existed !');
+    if (!users || users.length === 0) throw new Error('No account is existed !');
     return users;
 };
 
@@ -16,20 +16,28 @@ export const getUserById = async (id: string) => {
 
 export const getUserByEmail = async (id: string) => {
     const user = await userDAL.getUserByEmail(id);
-    if (!user) throw new Error('User not existed');
+    if (!user || user.length === 0) throw new Error('User not existed');
     return user;
 };
 
-
+export const getUserByUsername = async (username: string) => {
+    const user = await userDAL.getUserByUsername(username);
+    if (!user || user.length === 0) throw new Error('User not existed');
+    return user;
+};
 export const updateUser = async (user: UserUpdate, id: string) => {
     return await userDAL.saveUser(user, id);
 };
 
-export const updateAvatar = async (avatarUrl: string, id: string) => {
-    return await userDAL.updateAvatar(avatarUrl, id);
-};
-
 export const updatePassword = async (password: string, id: string) => {
     const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await userDAL.getUserById(id);
+    if (!user || user.length === 0) throw new Error('User not found');
     return await userDAL.updatePassword(hashedPassword, id);
+};
+
+export const deleteUser = async (id: string) => {
+    const user = await userDAL.getUserById(id);
+    if (!user || user.length === 0) throw new Error('User not found');
+    return await userDAL.deleteUser(id);
 };
