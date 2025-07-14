@@ -9,9 +9,7 @@ export const getUsersDAL = async () => {
 };
 
 export const getUserByIdDAL = async (id: string) => {
-    console.log('dal');
     const res = await pool.query(sql.getUserByIdSQL, [id]);
-    console.log(res.rows[0]);
     return res.rows[0];
 };
 

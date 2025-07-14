@@ -30,10 +30,8 @@ export const getUserByEmail = async (req: Request, res: Response) => {
 };
 
 export const searchUserByUsername = async (req: Request, res: Response) => {
-    console.log('a');
     try {
         const user = await userService.getUserByUsername(req.params.username);
-        console.log('req.params.username ', req.params.username);
         res.status(200).json(user);
     } catch (error) {
         res.status(404).json({ message: (error as Error).message });

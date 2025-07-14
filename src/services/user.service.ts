@@ -1,6 +1,5 @@
 import * as userDAL from '../dal/user.dal';
 import { UserUpdate } from '../models/user.update.model';
-import { Gender } from '../utils/enums';
 import { validUserInputPayload } from './validate_input_payload';
 import bcrypt from 'bcrypt';
 
@@ -28,14 +27,19 @@ export const getUserByUsername = async (username: string) => {
     return user;
 };
 export const updateUser = async (user: UserUpdate, id: string) => {
-    const { username, email, password, gender, dob} = user;
-    if (username && email && password && gender && dob) {
-        // Kiểm tra giá trị quan trọng truyền vào có hợp lệ không
-        validUserInputPayload(id, username, email, password, gender, dob);
-        return await userDAL.saveUserDAL(user, id);
-    }
-    throw new Error('Wrong data type for input value, please try again');
+    const { username, email, gender, dob } = user;
+    const userDatatype: string = username ?? ''; // Nếu username là null || undefined => set chuỗi rỗng
+    const emailDatatype: string = email ?? '';
+    const genderDatatype: string = gender ?? '';
+    const dobDatatype: string = dob ?? '';
 
+    // Kiểm tra giá trị quan trọng truyền vào có hợp lệ không
+    await validUserInputPayload(id, userDatatype, emailDatatype, genderDatatype, dobDatatype);
+    
+    if (user.password) {
+        throw new Error('Password are not allowed to input in here')
+    }
+    return await userDAL.saveUserDAL(user, id);
 };
 
 export const updatePassword = async (password: string, id: string) => {

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'; // Thư viện mã hóa password (hash ra để mã hóa từng ký tự)
 import jwt from 'jsonwebtoken'; // Thư viện tạo token cho user 
 import { createUserDAL, getUserByEmailDAL, saveUserDAL } from '../dal/user.dal';
-import { validUserInputPayload } from './validate_input_payload';
+import { validUserInputPayload, validPasswordValue } from './validate_input_payload';
 
 import dotenv from 'dotenv';
 
@@ -15,7 +15,14 @@ let token: string = '';
 export const registerUser = async (body: any): Promise<string> => {
     try {
         const { id, username, email, password, gender, dob, avatar_url, background_url } = body; // lấy ra các field có trong body làm biến ( vừa biến vừa giá trị )
-        await validUserInputPayload(id, username, email, password, gender, dob);
+
+        const duplicatedEmail = await getUserByEmailDAL(email);
+        if (duplicatedEmail) {  //Check trùng email, nếu có rồi thì không đăng ký lại nữa
+            throw new Error('Email has existed !');
+        }
+
+        await validUserInputPayload(id, username, email, gender, dob);
+        validPasswordValue (password);
 
         const encryptedPassword = await bcrypt.hash(password, 10); //hash chuỗi password với độ phức tạp = 10. Vì cần bất đồng bộ để mã hóa => xài await 
 
@@ -42,12 +49,9 @@ export const loginUser = async (email: string, password: string): Promise<string
 
         if (lockedAt) {
             const diffMinutes = ((now.getTime() - lockedAt.getTime()) - 7 * 60 * 60 * 1000) / (1000 * 60); // tính giờ từ  thời gian hiện tại - lúc bị khóa và công thức đổi sang phút -> 1, 2, 3,... phút
-            console.log(diffMinutes);
             if (diffMinutes < LOCK_DURATION_MINUTES) {
-                console.log('true');
                 throw new Error(`Account is locked. Try again in ${Math.ceil(LOCK_DURATION_MINUTES - diffMinutes)} minute(s).`);
             } else {
-                console.log('true unlock');
                 // Hết thời gian khóa → mở lại acc
                 await saveUserDAL({
                     is_locked: false,
