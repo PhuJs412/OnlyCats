@@ -4,32 +4,33 @@ export interface User {
   email: string;
   password: string;
 
-  bio?: string | null;
-  gender?: string | null;
-  dob?: string | null;
+  bio?: string | '';
+  gender?: string | '';
+  dob?: string | '';
+  address?: string | '';
 
-  is_private?: boolean | null;
-  is_verified?: boolean | null;
+  is_private?: boolean | '';
+  is_verified?: boolean | '';
 
-  last_login_at?: string | null;
+  last_login_at?: string | '';
 
-  otp_code?: string | null;
-  otp_expired_at?: string | null;
+  otp_code?: string | '';
+  otp_expired_at?: string | '';
 
-  failed_login_attempt?: number | null;
-  last_failed_attempt?: string | null;
+  failed_login_attempt?: number | '';
+  last_failed_attempt?: string | '';
 
-  is_locked?: boolean | null;
-  locked_at?: string | null;
+  is_locked?: boolean | '';
+  locked_at?: string | '';
 
-  avatar_url?: string | null;
-  background_url?: string | null;
+  avatar_url?: string | '';
+  background_url?: string | '';
 
-  is_abandoned?: boolean | null;
-  is_deleted?: boolean | null;
+  is_abandoned?: boolean | '';
+  is_deleted?: boolean | '';
 
-  created_at?: string | null;
-  created_by?: string | null;
-  updated_at?: string | null;
-  updated_by?: string | null;
+  created_at?: string | '';
+  created_by?: string | '';
+  updated_at?: string | '';
+  updated_by?: string | '';
 }

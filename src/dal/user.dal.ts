@@ -1,30 +1,31 @@
 import { pool } from '../config/pg.config';
-import { User } from '../models/user.model';
 import * as sql from '../sql/user.sql';
 import { UserUpdate } from '../models/user.update.model';
+import { User } from '../models/user.model';
 
-
-export const getUsers = async () => {
+export const getUsersDAL = async () => {
     const res = await pool.query(sql.getUsersSQL);
     return res.rows;
 };
 
-export const getUserById = async (id: string) => {
+export const getUserByIdDAL = async (id: string) => {
+    console.log('dal');
     const res = await pool.query(sql.getUserByIdSQL, [id]);
+    console.log(res.rows[0]);
     return res.rows[0];
 };
 
-export const getUserByUsername = async (username: string) => {
+export const getUserByUsernameDAL = async (username: string) => {
     const name =`%${username}%`;
     const res = await pool.query(sql.getUserByUsername, [name]);
     return res.rows;
 };
 
-export const updatePassword = async (hashedPassword: string, id: string) => {
+export const updatePasswordDAL = async (hashedPassword: string, id: string) => {
     return await pool.query(sql.updatePasswordSQL, [hashedPassword, id]);
 };
 
-export const createUser = async (
+export const createUserDAL = async (
     username: string,
     email: string,
     password: string,
@@ -35,19 +36,18 @@ export const createUser = async (
 
 ) => {
     const data = [username, email, password, gender, dob, avatarUrl, backgroundUrl];
-    const result = await pool.query(sql.createUserSQL, data); // Cần bất đồng bộ vì phải đợi truy vấn xong
+    await pool.query(sql.createUserSQL, data);
 };
 
-export const getUserByEmail = async (
+export const getUserByEmailDAL = async (
     email: string
-
 ) => {
     const data = [email];
     const result = await pool.query(sql.getUserByEmailSQL, data);
     return result.rows[0] || null; //Tìm không thấy sẽ trả về null, tránh trả về undefined
 };
 
-export const saveUser = async (user: UserUpdate, id: string) => {
+export const saveUserDAL = async (user: UserUpdate, id: string) => {
     const keys = Object.keys(user);
     const values = Object.values(user);
 
@@ -63,6 +63,6 @@ export const saveUser = async (user: UserUpdate, id: string) => {
     return await pool.query(result, [...values, id]);
 };
 
-export const deleteUser = async (id: string) => {
+export const deleteUserDAL = async (id: string) => {
     return await pool.query(sql.deleteUser, [id]);
 }
