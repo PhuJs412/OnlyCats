@@ -141,7 +141,7 @@ export const countShareByPostIdSQL = `
 `;
 
 export const createPost = `
-    insert into posts(user_id, content, media_url, visibility)
+    insert into posts (user_id, content, media_url, visibility)
     values ($1, $2, $3, $4)
 `;
 
@@ -163,7 +163,7 @@ export const updatePostSQL = (keys: string[]): string => {
 };
 
 export const deletePostSQL = `
-    delete from posts
+    update posts
         set is_deleted = TRUE
         where id = $1
 `;

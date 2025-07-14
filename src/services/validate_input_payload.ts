@@ -55,7 +55,7 @@ export const validPasswordValue = (password: string) => {
 
 export const validVisibilityStatus = async (visibility: string) => {
     const visibilityEnums = Object.values(Visibility) as string[];
-    if (visibilityEnums.includes(visibility.toLowerCase())) {
-        throw new Error("Visibility must be either 'public' or 'private'.");
+    if (!visibilityEnums.includes(visibility)) {
+        throw new Error("Visibility must be either 'public' or 'private' or 'follower_only'.");
     }
 };

@@ -43,7 +43,7 @@ export const createPostDAL = async (
     visibility: string
 ) => {
     const data = [user_id, content, media_url, visibility];
-    await pool.query(sql.createPost, [data]);
+    return await pool.query(sql.createPost, data);
 };
 
 export const createSharedPostDAL = async (
@@ -53,7 +53,7 @@ export const createSharedPostDAL = async (
     visibility: string
 ) => {
     const data = [user_id, shared_post_id, content, visibility];
-    await pool.query(sql.createSharedPost, [data]);
+    return await pool.query(sql.createSharedPost, data);
 };
 
 export const updatePostDAL = async (post: PostUpdate, id: string) => {

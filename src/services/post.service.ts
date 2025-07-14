@@ -13,7 +13,9 @@ export const getAllPost = async () => {
 export const getPostsByUserId = async (loginUserId: string, user_id: string) => {
     //Nếu login user là bản thân => Cho phép xem các bài viết của mình
     if (loginUserId.match(user_id)) {
+        console.log('true')
         const posts = await postDal.getPostsByMyselfIdDAL(user_id);
+        console.log('posts: ', posts);
         if (!posts || posts.length === 0) throw new Error('No post is existed!');
         return posts;
         // Nếu là người khác => Chỉ cho các bài public
@@ -25,21 +27,24 @@ export const getPostsByUserId = async (loginUserId: string, user_id: string) => 
 };
 
 //Lấy 1 bài viết theo id
-export const getPostById = async (loginUserId: string, user_id: string) => {
+export const getPostById = async (loginUserId: string, post_id: string) => {
+    const post = await postDal.getPostByIdDAL(post_id);
+    if (!post || post.length === 0) throw new Error('post is not available!');
+
     //Nếu login user là bản thân => Cho phép xem bài viết của mình
-    if (loginUserId.match(user_id)) {
-        const posts = await postDal.getPostByIdDAL(user_id);
-        if (!posts || posts.length === 0) throw new Error('post is not available!');
-        return posts;
+    if (loginUserId.match(post.user_id)) {
+        return post
     } else {
-        const posts = await postDal.getSomeonePostByIdDAL(user_id);
-        if (!posts || posts.length === 0) throw new Error('post is not available!');
-        return posts;
+        // Nếu không => trả post = rỗng
+        const someOnePost = await postDal.getSomeonePostByIdDAL(post_id);
+        if (!someOnePost || someOnePost.length === 0) throw new Error('post is not available!');
+        return someOnePost;
     }
 };
 
 export const countTotalSharedPostByIdL = async (id: string) => {
-    return await postDal.countTotalSharedPostByIdDAL(id);
+    const countSharedPost = await postDal.countTotalSharedPostByIdDAL(id);
+    return countSharedPost.rows;
 };
 
 export const createPostDAL = async (
@@ -48,8 +53,9 @@ export const createPostDAL = async (
     media_url: string,
     visibility: string
 ) => {
+    console.log(user_id, content, media_url, visibility);
     validVisibilityStatus(visibility);
-    return await postDal.createPostDAL(user_id, content, media_url, visibility);
+    await postDal.createPostDAL(user_id, content, media_url, visibility);
 };
 
 export const createSharedPost = async (
@@ -58,8 +64,12 @@ export const createSharedPost = async (
     content: string,
     visibility: string
 ) => {
-    validVisibilityStatus(visibility);
-    return await postDal.createSharedPostDAL(user_id, shared_post_id, content, visibility);
+    await validVisibilityStatus(visibility);
+    const post = await postDal.getPostByIdDAL(shared_post_id);
+    console.log('post: ', post);
+    if (!post || post.length === 0) throw new Error('No origin post has found');
+
+    await postDal.createSharedPostDAL(user_id, shared_post_id, content, visibility);
 };
 
 export const updatePost = async (loginUserId: string, post: PostUpdate, id: string) => {
@@ -70,4 +80,12 @@ export const updatePost = async (loginUserId: string, post: PostUpdate, id: stri
         return await postDal.updatePostDAL(post, id);
     }
     throw new Error('You do not have permission to update this post');
+};
+
+export const deletePost = async (loginUserId: string, id: string) => {
+    const userPost = await postDal.getPostByIdDAL(id);
+    if (loginUserId.match(userPost.user_id)) {
+        return await postDal.deletePost(id);
+    }
+    throw new Error('You do not have permission to delete this post');
 };

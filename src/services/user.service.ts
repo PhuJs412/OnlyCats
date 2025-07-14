@@ -1,6 +1,6 @@
 import * as userDAL from '../dal/user.dal';
 import { UserUpdate } from '../models/user.update.model';
-import { validUserInputPayload } from './validate_input_payload';
+import { validUserInputPayload, validPasswordValue } from './validate_input_payload';
 import bcrypt from 'bcrypt';
 
 export const getAllUsers = async () => {
@@ -43,6 +43,7 @@ export const updateUser = async (user: UserUpdate, id: string) => {
 };
 
 export const updatePassword = async (password: string, id: string) => {
+    validPasswordValue(password);
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await userDAL.getUserByIdDAL(id);
     if (!user || user.length === 0) throw new Error('User not found');
