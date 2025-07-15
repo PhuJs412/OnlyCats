@@ -1,7 +1,7 @@
 import * as postDal from '../dal/post.dal';
 import { PostUpdate } from '../models/post.update.model';
 import { validVisibilityStatus } from './validate_input_payload';
-
+import { deleteAllComment } from './comment.service';
 
 export const getAllPost = async () => {
     const posts = await postDal.getAllPostDAL();
@@ -81,7 +81,10 @@ export const updatePost = async (loginUserId: string, post: PostUpdate, id: stri
 export const deletePost = async (loginUserId: string, id: string) => {
     const userPost = await postDal.getPostByIdDAL(id);
     if (loginUserId.match(userPost.user_id)) {
-        return await postDal.deletePost(id);
+         await postDal.deletePost(id);
+         //Khi xóa post => xóa comment của post đó
+         await deleteAllComment(id);
+         return;
     }
     throw new Error('You do not have permission to delete this post');
 };

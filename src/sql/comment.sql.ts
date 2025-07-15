@@ -103,3 +103,10 @@ export const deleteCommentSQL = `
             set is_deleted = TRUE
             where id = $1
 `;
+
+//Xóa tất cả comment thuộc post_id ( phục vụ cho việc xóa post => xóa comment )
+export const deleteAllCommentSQL = `
+        update comments
+            set is_deleted = TRUE
+            where post_id = $1
+`;

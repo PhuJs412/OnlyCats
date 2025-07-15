@@ -55,3 +55,7 @@ export const updateComment = async (comment: CommentUpdate, comment_id: string) 
 export const deleteCommentDAL = async (comment_id: string) => {
     return await commentDal.deleteCommentDAL(comment_id);
 }
+
+export const deleteAllComment = async (post_id: string) => {
+    return await commentDal.deleteAllCommentDAL(post_id);
+}

@@ -66,3 +66,7 @@ export const updateCommentDAL = async (comment: CommentUpdate, comment_id: strin
 export const deleteCommentDAL = async (comment_id: string) => {
     return await pool.query(sql.deleteCommentSQL, [comment_id]);
 };
+
+export const deleteAllCommentDAL = async (post_id: string) => {
+    return await pool.query(sql.deleteAllCommentSQL, [post_id]);
+};
