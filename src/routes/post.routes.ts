@@ -9,7 +9,7 @@ router.get('/user-posts/:userId', authenticateJWT, postController.getPostsByUser
 router.get('/:id', authenticateJWT, postController.getPostById);
 router.get('/count-shared-post/:id', postController.countTotalSharedPostById);
 
-router.post('/create-post/', authenticateJWT, postController.createPost);
+router.post('/create/', authenticateJWT, postController.createPost);
 router.post('/create-shared-post/', authenticateJWT, postController.createSharedPost);
 
 router.patch('/edit/:id', authenticateJWT, postController.updatePost);

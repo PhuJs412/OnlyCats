@@ -13,9 +13,7 @@ export const getAllPost = async () => {
 export const getPostsByUserId = async (loginUserId: string, user_id: string) => {
     //Nếu login user là bản thân => Cho phép xem các bài viết của mình
     if (loginUserId.match(user_id)) {
-        console.log('true')
         const posts = await postDal.getPostsByMyselfIdDAL(user_id);
-        console.log('posts: ', posts);
         if (!posts || posts.length === 0) throw new Error('No post is existed!');
         return posts;
         // Nếu là người khác => Chỉ cho các bài public
@@ -53,7 +51,6 @@ export const createPostDAL = async (
     media_url: string,
     visibility: string
 ) => {
-    console.log(user_id, content, media_url, visibility);
     validVisibilityStatus(visibility);
     await postDal.createPostDAL(user_id, content, media_url, visibility);
 };
@@ -66,7 +63,6 @@ export const createSharedPost = async (
 ) => {
     await validVisibilityStatus(visibility);
     const post = await postDal.getPostByIdDAL(shared_post_id);
-    console.log('post: ', post);
     if (!post || post.length === 0) throw new Error('No origin post has found');
 
     await postDal.createSharedPostDAL(user_id, shared_post_id, content, visibility);
