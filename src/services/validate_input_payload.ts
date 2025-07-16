@@ -1,12 +1,22 @@
 import dayjs from 'dayjs';
-import { getUserByEmailDAL, getUserByIdDAL } from '../dal/user.dal';
+import { getUserByEmailDAL, getUserByIdDAL, getUserbyUsernameDAL } from '../dal/user.dal';
 import { Gender, Visibility } from '../utils/enums';
-import { PassThrough } from 'stream';
 
 export const validUserInputPayload = async (id: string, username: string, email: string, gender: string, dob: string) => {
     try {
 
-        //Check duplicated email
+        // check duplicated username
+        const duplicatedUsername = await getUserbyUsernameDAL(username);
+        if (duplicatedUsername) { 
+            throw new Error('Username has existed !');
+        }
+
+        // check duplicated email
+        const duplicatedEmail = await getUserByEmailDAL(email);
+        if (duplicatedEmail) { 
+            throw new Error('Email has existed !');
+        }
+
         if (email) {
             //Validate input email value
             const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/; //Bắt buộc email phải kết thúc bằng @gmail.com và có phần username hợp lệ.
