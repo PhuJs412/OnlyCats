@@ -5,7 +5,6 @@ export interface PostUpdate {
     is_deleted?: boolean,
 
     shared_post_id?: string,
-    share_count?: number,
     content?: string,
     media_url?: string,
     is_edited?: boolean,
