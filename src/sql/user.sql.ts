@@ -17,7 +17,14 @@ export const getUserByEmailSQL = `
         and is_abandoned = FALSE 
         `;
 
-export const getUserByUsername = `
+export const getUserByUsernameSQL = `
+    select * from users 
+        where username = $1 
+        and is_deleted = FALSE
+        and is_abandoned = FALSE 
+`;
+
+export const searchUserByUsername = `
     select * from users
         where username LIKE $1
         and is_deleted = FALSE

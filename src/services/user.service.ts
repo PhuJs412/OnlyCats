@@ -21,11 +21,6 @@ export const getUserByEmail = async (id: string) => {
     return user;
 };
 
-export const getUserByUsername = async (username: string) => {
-    const user = await userDAL.getUserByUsernameDAL(username);
-    if (!user || user.length === 0) throw new Error('User not existed');
-    return user;
-};
 export const updateUser = async (user: UserUpdate, id: string) => {
     const { username, email, gender, dob } = user;
     const userDatatype: string = username ?? ''; // Nếu username là null || undefined => set chuỗi rỗng
