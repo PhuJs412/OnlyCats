@@ -10,7 +10,7 @@ export interface AuthRequest extends Request {
 
 export const authenticateJWT: RequestHandler = (req, res, next) => {
     const authHeader = req.headers.authorization;
-
+    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         res.status(401).json({ message: 'Unauthorized - No token provided' });
         return;

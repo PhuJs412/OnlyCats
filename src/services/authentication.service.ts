@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'; // Thư viện mã hóa password (hash ra để mã hóa từng ký tự)
 import jwt from 'jsonwebtoken'; // Thư viện tạo token cho user 
-import { createUserDAL, getUserByEmailDAL, saveUserDAL } from '../dal/user.dal';
-import { validUserInputPayload, validPasswordValue } from './validate_input_payload';
+import { createUserDAL, getUserByEmailDAL, saveUserDAL, getUserbyUsernameDAL } from '../dal/user.dal';
+import { validUserInputPayload, validPasswordValue } from './validate_input_payload.service';
 
 import dotenv from 'dotenv';
 
@@ -15,12 +15,7 @@ let token: string = '';
 export const registerUser = async (body: any): Promise<string> => {
     try {
         const { id, username, email, password, gender, dob, avatar_url, background_url } = body; // lấy ra các field có trong body làm biến ( vừa biến vừa giá trị )
-
-        const duplicatedEmail = await getUserByEmailDAL(email);
-        if (duplicatedEmail) {  //Check trùng email, nếu có rồi thì không đăng ký lại nữa
-            throw new Error('Email has existed !');
-        }
-
+        
         await validUserInputPayload(id, username, email, gender, dob);
         validPasswordValue (password);
 
