@@ -15,7 +15,6 @@ export const getUserByIdDAL = async (id: string) => {
 
 export const getUserbyUsernameDAL = async (username: string) => {
     const res = await pool.query(sql.getUserByUsernameSQL, [username]);
-    console.log(res)
     return res.rows[0];
 };
 

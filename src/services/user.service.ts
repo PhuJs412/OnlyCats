@@ -1,6 +1,6 @@
 import * as userDAL from '../dal/user.dal';
 import { UserUpdate } from '../models/user.update.model';
-import { validUserInputPayload, validPasswordValue } from './validate_input_payload';
+import { validUserInputPayload, validPasswordValue } from './validate_input_payload.service';
 import bcrypt from 'bcrypt';
 
 export const getAllUsers = async () => {
