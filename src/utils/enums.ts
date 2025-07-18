@@ -17,3 +17,9 @@ export enum ReactionType {
   WOW = 'wow',
   CARE = 'care',
 }
+
+export enum FollowStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  CANCELLED = 'CANCELLED',
+}
