@@ -8,7 +8,6 @@ export const getAllFollowerUser = async (targetUserId: string) => {
 };
 
 export const getAllFollowingUser = async (followerId: string) => {
-    console.log('get follower: ', followerId);
     const followingUser = await followDal.getAllFollowingUserDAL(followerId);
     return followingUser;
 };
