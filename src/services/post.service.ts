@@ -64,7 +64,8 @@ export const getPostById = async (loginUserId: string, post_id: string) => {
     }
 
     if (userObj.is_private) {
-        if (followObj === loginUserId && followObj?.status === 'ACCEPTED' && !followObj?.is_deleted) {
+
+        if (followObj.follower_id === loginUserId && followObj?.status === 'ACCEPTED' && !followObj?.is_deleted) {
             const post = await postDal.getPostByFollowerIdDAL(post_id, loginUserId);
             if (!post || post.length === 0) throw new Error('post is not available!');
             return post;
@@ -72,6 +73,7 @@ export const getPostById = async (loginUserId: string, post_id: string) => {
             throw new Error('post is not available!');
         }
     } else {
+        
         if (followObj === loginUserId && !followObj?.is_deleted) {
             const post = await postDal.getPostByFollowerIdDAL(post_id, loginUserId);
             if (!post || post.length === 0) throw new Error('post is not available!');
