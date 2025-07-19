@@ -37,7 +37,6 @@ export const getPostsBySomeoneIdDAL = async (user_id: string) => {
     return res.rows;
 }
 
-
 export const getSomeonePostByIdDAL = async (id: string) => {
     const res = await pool.query(sql.getSomeonePostByIdSQL, [id]);
     return res.rows[0];

@@ -1,8 +1,9 @@
 import * as postDal from '../dal/post.dal';
+import { getUserByIdDAL } from '../dal/user.dal';
+import { getFollowByUserIdsDAL } from '../dal/follow.dal';
 import { PostUpdate } from '../models/post.update.model';
 import { validVisibilityStatus } from './validate_input_payload.service';
 import { deleteAllComment } from './comment.service';
-import { getAllFollowerUser } from './follow.service';
 
 export const getAllPost = async () => {
     const posts = await postDal.getAllPostDAL();
@@ -12,51 +13,75 @@ export const getAllPost = async () => {
 
 //Lấy danh sách bài viết theo user id
 export const getPostsByUserId = async (loginUserId: string, user_id: string) => {
-    const followerUserList = await getAllFollowerUser(user_id);
-    const followerUserId = followerUserList.map(user => user.follower_user_id);
+    const followObj = await getFollowByUserIdsDAL(loginUserId, user_id);
+    const userObj = await getUserByIdDAL(user_id);
 
-    //Nếu login user là bản thân => Cho phép xem các bài viết của mình
-    if (loginUserId.match(user_id)) {
+    // Nếu login user là bản thân => Cho phép xem các bài viết của mình
+    if (loginUserId === (user_id)) {
         const posts = await postDal.getPostsByMyselfIdDAL(user_id);
-        if (!posts || posts.length === 0) throw new Error('post is not available!');
-        return posts;
-
-        // Nếu user có trong danh sách follower của login user -> add cho phép xem post với visibility != private
-    } else if (followerUserId.includes(loginUserId)) {
-        const posts = await postDal.getPostsByFollowerIdDAL(user_id);
         if (!posts || posts.length === 0) throw new Error('post is not available!');
         return posts;
     }
 
-    // Nếu là người khác => Chỉ cho các bài public
-    const posts = await postDal.getPostsBySomeoneIdDAL(user_id);
-    if (!posts || posts.length === 0) throw new Error('post is not available!');
-    return posts;
+    // Nếu tài khoản private
+    if (userObj.is_private) {
+
+        // Phải thỏa 2 điều kiện: trong danh sách follow và được accept
+        if (followObj.follower_id === loginUserId && followObj?.status === 'ACCEPTED' && !followObj?.is_deleted) {
+            const posts = await postDal.getPostsByFollowerIdDAL(user_id);
+            if (!posts || posts.length === 0) throw new Error('post is not available!');
+            return posts;
+        } else {
+            throw new Error('This profile is private!');
+        }
+
+        // Tài khoản public
+    } else {
+
+        // Nếu user có trong danh sách follower của login user -> cho phép xem post với visibility != private
+        if (followObj.follower_id === loginUserId) {
+            const posts = await postDal.getPostsByFollowerIdDAL(user_id);
+            if (!posts || posts.length === 0) throw new Error('post is not available!');
+            return posts;
+        }
+
+        // Nếu là người khác => Chỉ cho các bài public
+        const posts = await postDal.getPostsBySomeoneIdDAL(user_id);
+        if (!posts || posts.length === 0) throw new Error('post is not available!');
+        return posts;
+    }
 };
 
 //Lấy 1 bài viết theo id
 export const getPostById = async (loginUserId: string, post_id: string) => {
     const post = await postDal.getPostByIdDAL(post_id);
-    const followerUserList = await getAllFollowerUser(post.user_id);
-    const followerUserId = followerUserList.map(user => user.follower_user_id);
+    const followObj = await getFollowByUserIdsDAL(loginUserId, post.user_id);
+    const userObj = await getUserByIdDAL(post.user_id);
 
-    if (!post || post.length === 0) throw new Error('post is not available!');
-
-    //Nếu login user là chính chủ của post => Cho phép xem bài viết của mình
     if (loginUserId.match(post.user_id)) {
+        if (!post || post.length === 0) throw new Error('post is not available!');
         return post;
-
-        // Nếu post đang xem của user mà follower đó có theo dõi => cho xem    
-    } else if (followerUserId.includes(loginUserId)) {
-        const followingPost = await postDal.getPostByFollowerIdDAL(post_id, loginUserId);
-        if (!followingPost || followingPost.length === 0) throw new Error('post is not available!');
-        return followingPost;
     }
 
-    // Nếu không => trả post = rỗng
-    const someOnePost = await postDal.getSomeonePostByIdDAL(post_id);
-    if (!someOnePost || someOnePost.length === 0) throw new Error('post is not available!');
-    return someOnePost;
+    if (userObj.is_private) {
+        if (followObj === loginUserId && followObj?.status === 'ACCEPTED' && !followObj?.is_deleted) {
+            const post = await postDal.getPostByFollowerIdDAL(post_id, loginUserId);
+            if (!post || post.length === 0) throw new Error('post is not available!');
+            return post;
+        } else {
+            throw new Error('post is not available!');
+        }
+    } else {
+        if (followObj === loginUserId && !followObj?.is_deleted) {
+            const post = await postDal.getPostByFollowerIdDAL(post_id, loginUserId);
+            if (!post || post.length === 0) throw new Error('post is not available!');
+            return post;
+        }
+
+        const someOnePost = await postDal.getSomeonePostByIdDAL(post_id);
+        if (!someOnePost || someOnePost.length === 0) throw new Error('post is not available!');
+        return someOnePost;
+    }
 };
 
 export const countTotalSharedPostByIdL = async (id: string) => {
