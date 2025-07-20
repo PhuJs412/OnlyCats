@@ -23,3 +23,10 @@ export enum FollowStatus {
   ACCEPTED = 'ACCEPTED',
   CANCELLED = 'CANCELLED',
 }
+
+export enum NotificationType {
+  NEW_POST = 'NEW_POST',
+  NEW_COMMENT = 'NEW_COMMENT',
+  NEW_FOLLOW = 'NEW_FOLLOW',
+  FOLLOW_ACCEPTED = 'FOLLOW_ACCEPTED',
+}
