@@ -25,6 +25,12 @@ export const getNotificationsByUserIdSQL = `
             and n.recipient_id is NOT NULL
             and n.is_read = FALSE
             and n.is_deleted = FALSE
+            and (
+                u.is_deleted = FALSE or
+                p.is_deleted = FALSE or
+                c.is_deleted = FALSE or
+                f.is_deleted = FALSE
+                )
         order by n.created_at DESC
 `;
 
