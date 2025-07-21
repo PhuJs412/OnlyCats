@@ -201,11 +201,13 @@ export const countSharedPostByPostIdSQL = `
 export const createPost = `
     insert into posts (user_id, content, media_url, visibility)
     values ($1, $2, $3, $4)
+	returning id
 `;
 
 export const createSharedPost = `
     insert into posts (user_id, shared_post_id, content, visibility)
     values ($1, $2, $3, $4)
+	returning id
 `;
 
 export const updatePostSQL = (keys: string[]): string => {
