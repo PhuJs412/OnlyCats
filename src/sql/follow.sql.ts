@@ -79,6 +79,7 @@ export const countFollowing = `
 export const followUserSQL = `
     insert into follows (follower_id, following_id, status)
         values ($1, $2, $3)
+        returning id
 `;
 
 // Cập nhật lại trạng thái cho follow
@@ -88,10 +89,11 @@ export const updateFollowStatusSQL = `
             updated_at = CURRENT_TIMESTAMP
         where follower_id = $1
             and following_id = $2
+    returning id
 `;
 
 // Xóa mềm của follow
-export const deleteFollowUserSQL = `
+export const deleteFollowerSQL = `
     update follows
         set is_deleted = TRUE,
             status = 'CANCELLED',
