@@ -13,6 +13,6 @@ router.post('/create/:targetUserId', authenticateJWT, followController.followUse
 
 router.patch('/edit-status/:targetUserId', authenticateJWT, followController.updateFollowStatus);
 
-router.delete('/delete/:targetUserId', authenticateJWT, followController.deleteUserFollow);
+router.delete('/delete/:targetUserId', authenticateJWT, followController.deleteFollower);
 
 export default router;

@@ -28,13 +28,16 @@ export const countFollowingDAL = async (followerId: string) => {
 };
 
 export const followUserDAL = async (loginUserId: string, targetUserId: string, status: string) => {
-    await pool.query(sql.followUserSQL, [loginUserId, targetUserId, status]);
+    const res = await pool.query(sql.followUserSQL, [loginUserId, targetUserId, status]);
+    return res.rows[0];
 };
 
 export const updateFollowStatusDAL = async (loginUserId: string, targetUserId: string, status: string) => {
-    await pool.query(sql.updateFollowStatusSQL, [loginUserId, targetUserId, status]);
+    console.log(loginUserId, targetUserId, status);
+    const res = await pool.query(sql.updateFollowStatusSQL, [loginUserId, targetUserId, status]);
+    return res.rows[0];
 };
 
-export const deleteUserDAL = async (loginUserId: string, targetUserId: string) => {
-    await pool.query(sql.deleteFollowUserSQL, [loginUserId, targetUserId]);
+export const deleteFollowerDAL = async (loginUserId: string, targetUserId: string) => {
+    await pool.query(sql.deleteFollowerSQL, [loginUserId, targetUserId]);
 };

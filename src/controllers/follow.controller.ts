@@ -65,13 +65,13 @@ export const updateFollowStatus = async (req: AuthRequest, res: Response) => {
     }
 };
 
-export const deleteUserFollow = async (req: AuthRequest, res: Response) => {
+export const deleteFollower = async (req: AuthRequest, res: Response) => {
     try {
         const loginUserId = req.user?.id || '';
         if (!loginUserId) {
             res.status(401).json({ message: 'Unauthorized' });
         }
-        await followService.deleteUser(loginUserId, req.params.targetUserId);
+        await followService.deleteFollower(loginUserId, req.params.targetUserId);
         res.status(200).json('Ok');
     } catch (error) {
         res.status(500).json({ message: (error as Error).message });
