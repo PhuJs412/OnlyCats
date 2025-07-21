@@ -156,8 +156,7 @@ export const deletePost = async (loginUserId: string, id: string) => {
 const sendPostNotification = async (user_id: string, post: Post) => {
     const followers = await getAllFollowerDAL(user_id);
     const user = await getUserByIdDAL(user_id);
-    const notificationContent = post.shared_post_id ? NotificationType.NEW_SHARED_POST : NotificationType.NEW_FOLLOW
-
+    const notificationContent = post.shared_post_id ? NotificationType.NEW_SHARED_POST : NotificationType.NEW_POST
     if (followers && followers.length > 0) {
         const io = getIO(); // Lấy instance của IO
         for (const follower of followers) {
@@ -171,6 +170,7 @@ const sendPostNotification = async (user_id: string, post: Post) => {
                 comment_id: undefined,
                 follow_id: undefined
             });
+                console.log(`Notification created with : ${notification}`);
             try {
                 // Gửi thông báo qua Websocket tới follower
                 io.to(follower.user_id).emit("notification", {
