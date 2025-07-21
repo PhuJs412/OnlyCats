@@ -20,7 +20,7 @@ export const createNotificationDAL = async (
     comment_id: string | null | undefined,
     follow_id: string | null | undefined
 ) => {
-    return await pool.query(notificationSQL.createNotificationSQL,
+    const res = await pool.query(notificationSQL.createNotificationSQL,
         [
             recipient_id,
             sender_id, content,
@@ -29,6 +29,7 @@ export const createNotificationDAL = async (
             follow_id ?? null
         ]
     ); // chuyển thành null đối với id không được truyền giá trị
+    return res.rows[0];
 };
 
 export const updateNotificationStatusDAL = async (notification_id: string) => {
