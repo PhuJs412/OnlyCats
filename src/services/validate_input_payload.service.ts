@@ -47,7 +47,7 @@ export const validUserInputPayload = async (id: string, username: string, email:
         }
 
     } catch (error) {
-        console.log("Lỗi khi valid input data");
+        console.log("Have error when input data");
         throw error
     }
 };
@@ -75,6 +75,6 @@ export const validVisibilityStatus = (visibility: string) => {
 export const validFollowStatus = (status: string) => {
     const followStatusEnums = Object.values(FollowStatus) as string[];
     if (!followStatusEnums.includes(status)) {
-        throw new Error("Follow status must be 'PENDING' or 'ACCEPTED' or 'CANCELED'.");
+        throw new Error("Follow status must be 'PENDING' or 'ACCEPTED' or 'APPROVED' or 'CANCELED'.");
     }
 };

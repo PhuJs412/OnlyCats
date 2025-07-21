@@ -1,12 +1,11 @@
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
 
-dotenv.config(); //Thực thi hàm config() của Pool trong pg => để sử dụng cơ chế đọc file .env và lấy giá trị từ đó
+dotenv.config();
 
 export const pool = new Pool({
 
     //DÀNH CHO KẾT NỐI TỪ NEON (DB CLOUD)
-
     connectionString: process.env.DATABASE_URL,
     ssl: {
         rejectUnauthorized: false
