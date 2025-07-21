@@ -1,8 +1,8 @@
 export interface Post {
-    id: string,
-    user_id: string,
-    visibility: string,
-    is_deleted: boolean,
+    id?: string,
+    user_id?: string,
+    visibility?: string,
+    is_deleted?: boolean,
 
     shared_post_id?: string,
     content?: string,
