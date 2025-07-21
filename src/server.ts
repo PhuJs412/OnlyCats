@@ -1,8 +1,17 @@
-import app from './app';
+import { server } from './app';
 import { testDbConnection } from './config/pg.config';
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, async () => {
-    console.log(`🚀 Server is running on localhost:${PORT}`)
-    await testDbConnection();
-});
+
+const startServer = async () => {
+  try {
+    await testDbConnection(); // Test DB trước khi khởi động server
+    server.listen(PORT, () => {
+      console.log(`Server running at http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+  }
+};
+
+startServer();
