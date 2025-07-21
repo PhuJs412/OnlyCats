@@ -49,28 +49,16 @@ export const getRepliesByCommentIdSQL = `
     order by created_at DESC
 `;
 
-export const getReplyByCommentIdSQL = `
-    select id as comment_id,
-        user_id,
-        post_id,
-        parent_comment_id,
-        content,
-        is_edited,
-        created_at,
-        updated_at
-    from comments
-    where id = $1
-    and is_deleted = FALSE
-`;
-
 export const createCommentSQL = `
     insert into comments (user_id, post_id, content)
         values ($1, $2, $3)
+        returning id, user_id
 `;
 
 export const createReplySQL = `
     insert into comments (user_id, post_id, content, parent_comment_id)
         values ($1, $2, $3, $4)
+        returning id, user_id, parent_comment_id
 `;
 
 export const countCommentByPostIdSQL = `
