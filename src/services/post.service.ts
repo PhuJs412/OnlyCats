@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as postDal from '../dal/post.dal';
 import { getUserByIdDAL } from '../dal/user.dal';
 import { getFollowByUserIdsDAL, getAllFollowerDAL } from '../dal/follow.dal';
@@ -118,7 +119,8 @@ export const createSharedPost = async (
     content: string,
     visibility: string
 ) => {
-    await validVisibilityStatus(visibility);
+    
+    validVisibilityStatus(visibility);
 
     //Kiểm tra trước khi share, post đó có tồn tại hay không
     const post = await postDal.getPostByIdDAL(shared_post_id);
@@ -179,7 +181,7 @@ const sendPostNotification = async (user_id: string, post: Post) => {
                     sender_id: user_id,
                     content: generateNotificationContent(notificationContent, user.username),
                     post_id: post.id,
-                    created_at: notification.created_at,
+                    created_at: dayjs(notification.created_at).format('YYYY-MM-DD HH:mm:ss'),
                     type: NotificationType.NEW_POST
                 });
                 console.log(`Notification sent to ${follower.user_id}`);
