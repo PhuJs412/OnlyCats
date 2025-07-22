@@ -1,6 +1,8 @@
+import dayjs from 'dayjs';
 import * as notificationDal from "../dal/notification.dal";
 import { Notification } from "../models/notification.model";
 import { NotificationType } from "../utils/enums";
+import { ReactionType } from "../utils/enums";
 
 export const getNotificationsByUserId = async (recipient_id: string): Promise<Notification[]> => {
     const notifications: Notification[] = await notificationDal.getNotificationsByUserIdDAL(recipient_id);
@@ -13,8 +15,7 @@ export const countNonReadedNotification = async (recipient_id: string): Promise<
 };
 
 export const createNotification = async (notification: Notification): Promise<Notification> => {
-    const { recipient_id, sender_id, content, post_id, comment_id, follow_id } = notification;
-
+    const { recipient_id, sender_id, content, post_id, comment_id, follow_id, created_at } = notification;
     // Kiểm tra các field quan trọng
     if (!recipient_id) throw new Error('Recipient ID is required');
     if (!sender_id) throw new Error('Sender ID is required');
@@ -48,7 +49,12 @@ export const deleteNotification = async (notification_id: string) => {
     return await notificationDal.deleteNotificationDAL(notification_id);
 };
 
-export const generateNotificationContent = (type: NotificationType, senderName: string): string => {
+export const generateNotificationContent = (
+    type: NotificationType,
+    senderName: string,
+    ...arg: [ReactionType?] // Khai res param và mong đợi 1 tham số reactionType, có thể undefined
+): string => {
+    const [reactionType] = arg;
     switch (type) {
         case NotificationType.NEW_POST:
             return `${senderName} vừa đăng một bài viết mới.`;
@@ -66,6 +72,10 @@ export const generateNotificationContent = (type: NotificationType, senderName: 
             return `${senderName} đã gửi lời mời theo dõi bạn.`;
         case NotificationType.FOLLOW_ACCEPTED:
             return `${senderName} đã chấp nhận lời mời theo dõi của bạn.`;
+        case NotificationType.REACTION_POST:
+            return reactionType ? `${senderName} đã thả ${reactionType} vào bài viết của bạn.` : '';
+        case NotificationType.REACTION_COMMENT:
+            return reactionType ? `${senderName} đã thả ${reactionType} vào bình luận của bạn.` : '';
         default:
             return 'Bạn có một thông báo mới.';
     }
