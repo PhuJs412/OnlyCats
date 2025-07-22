@@ -12,6 +12,8 @@ export enum Visibility {
 
 export enum ReactionType {
   LIKE = 'like',
+  HAHA = 'haha',
+  LOVE = 'love',
   SAD = 'sad',
   ANGRY = 'angry',
   WOW = 'wow',
@@ -34,5 +36,8 @@ export enum NotificationType {
   FOLLOW_ACCEPTED = 'FOLLOW_ACCEPTED',
 
   COMMENT = 'COMMENT',
-  REPLY = 'REPLY'
+  REPLY = 'REPLY',
+
+  REACTION_POST = 'REACTION_POST',
+  REACTION_COMMENT = `REACTION_COMMENT`
 }

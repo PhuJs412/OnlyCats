@@ -2,7 +2,7 @@ export const getNotificationsByUserIdSQL = `
     select n.id as notification_id,
          n.recipient_id,
          n.sender_id,
-         u.username,
+         u.username as sender_username,
          u.avatar_url,
          u.background_url,
          n.content,
@@ -54,7 +54,7 @@ export const createNotificationSQL = `
             follow_id
             )
         values ($1, $2, $3, $4, $5, $6)
-        returning id
+        returning id, created_at
 `;
 
 export const updateNotificationStatusSQL = `
