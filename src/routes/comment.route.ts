@@ -10,8 +10,8 @@ router.get('/replies/:comment_id', commentController.getRepliesByCommentId);
 router.get('/count/:post_id', commentController.countCommentByPostId);
 router.get('/reply-count/:comment_id', commentController.countReplyByCommentId);
 router.post('/create', authenticateJWT, commentController.createComment);
-router.post('/create-reply', commentController.createReply);
-router.patch('/edit/:comment_id', commentController.updateComment);
+router.post('/create-reply', authenticateJWT, commentController.createReply);
+router.patch('/edit/:comment_id',authenticateJWT, commentController.updateComment);
 router.delete('/delete/:comment_id', commentController.deleteComment);
 
 export default router

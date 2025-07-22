@@ -64,8 +64,14 @@ export const createReply = async (loginUserId: string, postId: string, content: 
     }
 };
 
-export const updateComment = async (comment: CommentUpdate, comment_id: string) => {
-    return await commentDal.updateCommentDAL(comment, comment_id);
+export const updateComment = async (loginUserId: string, comment: CommentUpdate, comment_id: string) => {
+    const commentExists = await commentDal.getCommentByIdDAL(comment_id);
+    if( !commentExists) throw new Error('Comment not found');
+    
+    if (loginUserId === commentExists.user_id) {
+        return await commentDal.updateCommentDAL(comment, comment_id);
+    }
+    throw new Error('You do not have permission to update this comment');
 };
 
 export const deleteCommentDAL = async (comment_id: string) => {
