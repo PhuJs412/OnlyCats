@@ -1,32 +1,69 @@
 export const getUsersSQL = `
-    select * from users 
-        where is_deleted = FALSE
+    select id as user_id,
+        username,
+        email,
+        bio,
+        gender,
+        dob,
+        address,
+        is_private,
+        avatar_url,
+        background_url,
+        last_login_at
+    from users 
+    where is_deleted = FALSE
         and is_abandoned = FALSE      
 `;
 
 export const getUserByIdSQL = `
-    select * from users
-        where id = $1    
+    select id as user_id,
+        username,
+        email,
+        bio,
+        gender,
+        dob,
+        address,
+        is_private,
+        avatar_url,
+        background_url,
+        last_login_at
+    from users
+    where id = $1    
         and is_deleted = FALSE
         and is_abandoned = FALSE 
 `;
 export const getUserByEmailSQL = `
-    select * from users 
-        where email = $1 
+    select id as user_id,
+        username,
+        email,
+        bio,
+        gender,
+        dob,
+        address,
+        is_private,
+        avatar_url,
+        background_url,
+        last_login_at
+    from users 
+    where email = $1 
         and is_deleted = FALSE
         and is_abandoned = FALSE 
         `;
 
-export const getUserByUsernameSQL = `
-    select * from users 
-        where username = $1 
-        and is_deleted = FALSE
-        and is_abandoned = FALSE 
-`;
-
 export const searchUserByUsername = `
-    select * from users
-        where username LIKE $1
+    select id as user_id,
+        username,
+        email,
+        bio,
+        gender,
+        dob,
+        address,
+        is_private,
+        avatar_url,
+        background_url,
+        last_login_at
+    from users
+    where username LIKE $1
         and is_deleted = FALSE
         and is_abandoned = FALSE 
 `;

@@ -21,6 +21,12 @@ export const getUserByEmail = async (id: string) => {
     return user;
 };
 
+export const searchUserByUsername = async (username: string) => {
+    const user = await userDAL.searchUsernameDAL(username);
+    if (!user || user.length === 0) throw new Error('User not found');
+    return user;
+};
+
 export const updateUser = async (user: UserUpdate, id: string) => {
     const { username, email, gender, dob } = user;
     const userDatatype: string = username ?? ''; // Nếu username là null || undefined => set chuỗi rỗng
@@ -30,7 +36,7 @@ export const updateUser = async (user: UserUpdate, id: string) => {
 
     // Kiểm tra giá trị quan trọng truyền vào có hợp lệ không
     await validUserInputPayload(id, userDatatype, emailDatatype, genderDatatype, dobDatatype);
-    
+
     if (user.password) {
         throw new Error('Password are not allowed to input in here')
     }
