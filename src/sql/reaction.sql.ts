@@ -1,24 +1,3 @@
-
-// Lấy reaction của 1 user
-export const getReactionByUserIdAndTypeSQL = `
-    select r.id as reaction_id,
-        r.user_id,
-        u.username,
-        u.avatar_url,
-        u.background_url,
-        r.type 
-    from reactions r
-        inner join users u on u.id = r.user_id
-    where r.user_id = $1
-        and r.type = $2
-        and (
-            r.is_deleted = 'false' or
-            u.is_deleted = 'false'
-        )
-    order by created_at desc
-`;
-
-
 // POSTS
 
 // Lấy toàn bộ reactions từ 1 bài viết
@@ -34,13 +13,13 @@ export const getAllReactionsByPostIdSQL = `
         left join posts p on p.id = r.post_id
         left join comments c on c.id = r.comment_id 
     where r.post_id = $1
+        and u.is_deleted = 'false'
+        and r.is_deleted = 'false'
         and (
-        r.is_deleted = 'false' or
-        u.is_deleted = 'false' or
         p.is_deleted = 'false' or
         c.is_deleted = 'false'
         )
-    order by created_at desc
+    order by r.created_at desc
 `;
 
 // Lấy toàn bộ reactions từ 1 bài viết theo type
@@ -57,13 +36,35 @@ export const getAllReactionsByPostIdAndTypeSQL = `
         left join comments c on c.id = r.comment_id 
     where r.post_id = $1
         and r.type = $2
+        and u.is_deleted = 'false'
+        and r.is_deleted = 'false'
         and (
-        r.is_deleted = 'false' or
-        u.is_deleted = 'false' or
         p.is_deleted = 'false' or
         c.is_deleted = 'false'
         )
-    order by created_at desc
+    order by r.created_at desc
+`;
+
+// Lấy reaction của 1 post 
+export const getExistedReactionByUserIdAndPostIdSQL = `
+    select r.id as reaction_id,
+        r.user_id,
+        u.username,
+        u.avatar_url,
+        u.background_url,
+        r.type 
+    from reactions r
+        inner join users u on u.id = r.user_id
+        left join posts p on p.id = r.post_id
+        left join comments c on c.id = r.comment_id 
+    where r.user_id = $1
+        and r.post_id = $2
+        and u.is_deleted = FALSE
+        and r.is_deleted = 'false'
+        and (
+        p.is_deleted = 'false' or
+        c.is_deleted = 'false'
+        )
 `;
 
 // Đếm tổng số reactions của 1 bài viết
@@ -73,11 +74,11 @@ export const countReactionsByPostIdSQL = `
         inner join users u on u.id = r.user_id
         left join posts p on p.id = r.post_id
         left join comments c on c.id = r.comment_id 
-    where post_id = $1
-        and is_deleted = 'false'
+    where r.post_id = $1
+        and r.is_deleted = 'false'
+        and u.is_deleted = 'false'
+        and r.is_deleted = 'false'
         and (
-        r.is_deleted = 'false' or
-        u.is_deleted = 'false' or
         p.is_deleted = 'false' or
         c.is_deleted = 'false'
         )
@@ -90,12 +91,12 @@ export const countReactionsByPostIdAndTypeSQL = `
         inner join users u on u.id = r.user_id
         left join posts p on p.id = r.post_id
         left join comments c on c.id = r.comment_id 
-    where post_id = $1
-        and type = $2
-        and is_deleted = 'false'
+    where r.post_id = $1
+        and r.type = $2
+        and r.is_deleted = 'false'
+        and u.is_deleted = 'false'
+        and r.is_deleted = 'false'
         and (
-        r.is_deleted = 'false' or
-        u.is_deleted = 'false' or
         p.is_deleted = 'false' or
         c.is_deleted = 'false'
         )
@@ -103,7 +104,7 @@ export const countReactionsByPostIdAndTypeSQL = `
 // ** END - POSTS **
 
 
-// REACTIONS
+// COMMENTS
 // Lấy toàn bộ reactions từ 1 comment
 export const getAllReactionsByCommentIdSQL = `
     select r.id as reaction_id,
@@ -117,13 +118,13 @@ export const getAllReactionsByCommentIdSQL = `
         left join posts p on p.id = r.post_id
         left join comments c on c.id = r.comment_id 
     where r.comment_id = $1
+        and u.is_deleted = 'false'
+        and r.is_deleted = 'false'
         and (
-        r.is_deleted = 'false' or
-        u.is_deleted = 'false' or
         p.is_deleted = 'false' or
         c.is_deleted = 'false'
         )
-    order by created_at desc
+    order by r.created_at desc
 `;
 
 // Lấy toàn bộ reactions từ 1 comment theo type
@@ -140,13 +141,35 @@ export const getAllReactionsByCommentIdAndTypeSQL = `
         left join comments c on c.id = r.comment_id 
     where r.comment_id = $1
         and r.type = $2
+        and u.is_deleted = 'false'
+        and r.is_deleted = 'false'
         and (
-        r.is_deleted = 'false' or
-        u.is_deleted = 'false' or
         p.is_deleted = 'false' or
         c.is_deleted = 'false'
         )
-    order by created_at desc
+    order by r.created_at desc
+`;
+
+// Lấy reaction của 1 comment 
+export const getExistedReactionByUserIdAndCommentIdSQL = `
+    select r.id as reaction_id,
+        r.user_id,
+        u.username,
+        u.avatar_url,
+        u.background_url,
+        r.type 
+    from reactions r
+        inner join users u on u.id = r.user_id
+        left join posts p on p.id = r.post_id
+        left join comments c on c.id = r.comment_id 
+    where r.user_id = $1
+        and r.comment_id = $2
+        and u.is_deleted = FALSE
+        and r.is_deleted = 'false'
+        and (
+        p.is_deleted = 'false' or
+        c.is_deleted = 'false'
+        )
 `;
 
 // Đếm tổng số reactions của 1 comment
@@ -157,10 +180,9 @@ export const countReactionsByCommentIdSQL = `
         left join posts p on p.id = r.post_id
         left join comments c on c.id = r.comment_id 
     where comment_id = $1
-        and is_deleted = 'false'
+        and r.is_deleted = 'false'
+        and u.is_deleted = 'false'
         and (
-        r.is_deleted = 'false' or
-        u.is_deleted = 'false' or
         p.is_deleted = 'false' or
         c.is_deleted = 'false'
         )
@@ -174,11 +196,10 @@ export const countReactionsByCommentIdAndTypeSQL = `
         left join posts p on p.id = r.post_id
         left join comments c on c.id = r.comment_id 
     where comment_id = $1
-        and type = $2
-        and is_deleted = 'false'
+        and r.type = $2
+        and u.is_deleted = 'false'
+        and r.is_deleted = 'false'
         and (
-        r.is_deleted = 'false' or
-        u.is_deleted = 'false' or
         p.is_deleted = 'false' or
         c.is_deleted = 'false'
         )
@@ -194,7 +215,21 @@ export const createReactionSQL = `
             type
             )
         values ($1, $2, $3, $4)
-        returning id
+        returning id, type
+`;
+
+export const updatePostReactionTypeSQL = `
+    update reactions
+        set type = $3, is_deleted = FALSE
+        where user_id = $1
+            and post_id = $2
+`;
+
+export const updateCommentReactionTypeSQL = `
+    update reactions
+        set type = $3, is_deleted = FALSE
+        where user_id = $1
+            and comment_id = $2
 `;
 
 export const deleteReactionSQL = `

@@ -1,12 +1,6 @@
 import * as reactionSQL from "../sql/reaction.sql";
 import { pool } from "../config/pg.config";
 
-
-export const getReactionByUserIdAndTypeSQL = async (userId: string, type: string) => {
-    const res = await pool.query(reactionSQL.getReactionByUserIdAndTypeSQL, [userId, type]);
-    return res.rows[0];
-}
-
 // POSTS
 export const getAllReactionsByPostIdDAL = async (postId: string) => {
     const res = await pool.query(reactionSQL.getAllReactionsByPostIdSQL, [postId]);
@@ -16,6 +10,11 @@ export const getAllReactionsByPostIdDAL = async (postId: string) => {
 export const getAllReactionsByPostIdAndTypeDAL = async (postId: string, type: string) => {
     const res = await pool.query(reactionSQL.getAllReactionsByPostIdAndTypeSQL, [postId, type]);
     return res.rows;
+}
+
+export const getExistedReactionByUserIdAndPostIdDAL = async (userId: string, post_id: string) => {
+    const res = await pool.query(reactionSQL.getExistedReactionByUserIdAndPostIdSQL, [userId, post_id]);
+    return res.rows[0];
 }
 
 export const countReactionsByPostIdDAL = async (postId: string) => {
@@ -40,6 +39,11 @@ export const getAllReactionsByCommentIdAndTypeDAL = async (commentId: string, ty
     return res.rows;
 }
 
+export const getExistedReactionByUserIdAndCommentIdDAL = async (userId: string, comment_id: string) => {
+    const res = await pool.query(reactionSQL.getExistedReactionByUserIdAndCommentIdSQL, [userId, comment_id]);
+    return res.rows[0];
+}
+
 export const countReactionsByCommentIdDAL = async (commentId: string) => {
     const res = await pool.query(reactionSQL.countReactionsByCommentIdSQL, [commentId]);
     return res.rows[0];
@@ -57,6 +61,7 @@ export const createReactionDAL = async (
     commentId: string,
     type: string
 ) => {
+    console.log('Creating reaction with:', { userId, postId, commentId, type });
     const res = await pool.query(reactionSQL.createReactionSQL,
         [
             userId,
@@ -67,6 +72,15 @@ export const createReactionDAL = async (
     );
     return res.rows[0];
 }
+
+export const updatePostReactionTypeDAL = async (userId: string, postId: string, type: string) => {
+    return await pool.query(reactionSQL.updatePostReactionTypeSQL, [userId, postId, type]);
+};
+
+export const updateCommentReactionTypeDAL = async (userId: string, commentId: string, type: string) => {
+    console.log('Updating comment reaction type with:', { userId, commentId, type });
+    return await pool.query(reactionSQL.updateCommentReactionTypeSQL, [userId, commentId, type]);
+};
 
 export const deleteReactionDAL = async (id: string) => {
     return await pool.query(reactionSQL.deleteReactionSQL, [id]);

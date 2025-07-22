@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { getUserByEmailDAL, getUserbyUsernameDAL } from '../dal/user.dal';
-import { FollowStatus, Gender, Visibility } from '../utils/enums';
+import { FollowStatus, Gender, Visibility, ReactionType } from '../utils/enums';
 
 // Kiểm tra giá trị đầu vào user
 export const validUserInputPayload = async (id: string, username: string, email: string, gender: string, dob: string) => {
@@ -76,5 +76,13 @@ export const validFollowStatus = (status: string) => {
     const followStatusEnums = Object.values(FollowStatus) as string[];
     if (!followStatusEnums.includes(status)) {
         throw new Error("Follow status must be 'PENDING' or 'ACCEPTED' or 'APPROVED' or 'CANCELED'.");
+    }
+};
+
+// Kiểm tra reaction type
+export const validReactionType = (type: string) => {
+    const reactionTypeEnums = Object.values(ReactionType) as string[];
+    if (!reactionTypeEnums.includes(type)) {
+        throw new Error("Reaction type must be 'like' or 'haha' or 'love' or 'sad' or 'angry' or 'wow' or 'care'.");
     }
 };
