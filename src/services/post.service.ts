@@ -172,6 +172,7 @@ const sendPostNotification = async (user_id: string, post: Post) => {
                 comment_id: undefined,
                 follow_id: undefined
             });
+                console.log(`Notification created with : ${notification}`);
             try {
                 // Gửi thông báo qua Websocket tới follower
                 io.to(follower.user_id).emit("notification", {
