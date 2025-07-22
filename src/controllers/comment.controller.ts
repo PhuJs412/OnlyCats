@@ -52,7 +52,6 @@ export const createComment = async (req: AuthRequest, res: Response) => {
     try {
         const loginUserId = req.user?.id || '';
         const { post_id, content } = req.body;
-        console.log('abc: ', req.user?.id)
         await commentService.createComment(loginUserId, post_id, content);
         res.status(200).json('ok');
     } catch (error) {
