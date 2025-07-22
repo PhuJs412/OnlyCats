@@ -64,7 +64,7 @@ export const getPostById = async (loginUserId: string, post_id: string) => {
     const followObj = await getFollowByUserIdsDAL(loginUserId, post.user_id);
     const userObj = await getUserByIdDAL(post.user_id);
 
-    if (loginUserId.match(post.user_id)) {
+    if (loginUserId === post.user_id) {
         if (!post || post.length === 0) throw new Error('post is not available!');
         return post;
     }
@@ -135,7 +135,7 @@ export const createSharedPost = async (
 export const updatePost = async (loginUserId: string, post: PostUpdate, id: string) => {
     const userPost = await postDal.getPostByIdDAL(id);
 
-    if (loginUserId.match(userPost.user_id)) {
+    if (loginUserId === userPost.user_id) {
         const visibility: string = post.visibility || '';
         validVisibilityStatus(visibility);
         return await postDal.updatePostDAL(post, id);
@@ -146,7 +146,7 @@ export const updatePost = async (loginUserId: string, post: PostUpdate, id: stri
 export const deletePost = async (loginUserId: string, id: string) => {
     const userPost = await postDal.getPostByIdDAL(id);
 
-    if (loginUserId.match(userPost.user_id)) {
+    if (loginUserId === userPost.user_id) {
         await postDal.deletePost(id);
         //Khi xóa post => xóa comment của post đó
         await deleteAllComment(id);
