@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as commentDal from '../dal/comment.dal';
 import { CommentUpdate } from '../models/comment.update.model';
 import { getPostByIdDAL } from '../dal/post.dal';
@@ -35,9 +36,6 @@ export const countReplyByCommentId = async (comment_id: string) => {
 
 // Hàm tạo comment
 export const createComment = async (loginUserId: string, postId: string, content: string) => {
-        console.log(loginUserId)
-        console.log(postId)
-
     if (!postId || !content) throw new Error('Post ID and content are required');
 
     try {
@@ -45,7 +43,7 @@ export const createComment = async (loginUserId: string, postId: string, content
         if (!comment || !comment.id) throw new Error('Failed to create comment');
 
         await sendCommentNotification(loginUserId, postId, comment);
-        return comment; // Trả về comment để client sử dụng
+        return;
     } catch (error) {
         throw new Error(`Failed to create comment: ${error}`);
     }
@@ -109,10 +107,10 @@ const sendCommentNotification = async (loginUserId: string, postId: string, comm
             sender_id: loginUserId,
             content,
             comment_id: comment.id,
-            created_at: notification.created_at,
+            created_at: dayjs(notification.created_at).format('YYYY-MM-DD HH:mm:ss'),
             type: notificationType
         });
-        console.log(`Notification sent to ${recipientId}`);
+        console.log(`Notification sent to ${recipientId} ${dayjs(notification.created_at).format('YYYY-MM-DD HH:mm:ss')}`);
     } catch (error) {
         throw new Error(`Failed to send notification to ${recipientId}: ${error}`);
     }
