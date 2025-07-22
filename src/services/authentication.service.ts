@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'; // Thư viện mã hóa password (hash ra để mã hóa từng ký tự)
 import jwt from 'jsonwebtoken'; // Thư viện tạo token cho user 
-import { createUserDAL, getUserByEmailDAL, saveUserDAL, getUserbyUsernameDAL } from '../dal/user.dal';
+import { createUserDAL, getUserByEmailDAL, saveUserDAL } from '../dal/user.dal';
 import { validUserInputPayload, validPasswordValue } from './validate_input_payload.service';
 
 import dotenv from 'dotenv';
