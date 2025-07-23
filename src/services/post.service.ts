@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as postDal from '../dal/post.dal';
 import { getUserByIdDAL } from '../dal/user.dal';
 import { getFollowByUserIdsDAL, getAllFollowerDAL } from '../dal/follow.dal';
@@ -63,7 +64,7 @@ export const getPostById = async (loginUserId: string, post_id: string) => {
     const followObj = await getFollowByUserIdsDAL(loginUserId, post.user_id);
     const userObj = await getUserByIdDAL(post.user_id);
 
-    if (loginUserId.match(post.user_id)) {
+    if (loginUserId === post.user_id) {
         if (!post || post.length === 0) throw new Error('post is not available!');
         return post;
     }
@@ -118,7 +119,8 @@ export const createSharedPost = async (
     content: string,
     visibility: string
 ) => {
-    await validVisibilityStatus(visibility);
+    
+    validVisibilityStatus(visibility);
 
     //Kiểm tra trước khi share, post đó có tồn tại hay không
     const post = await postDal.getPostByIdDAL(shared_post_id);
@@ -133,7 +135,7 @@ export const createSharedPost = async (
 export const updatePost = async (loginUserId: string, post: PostUpdate, id: string) => {
     const userPost = await postDal.getPostByIdDAL(id);
 
-    if (loginUserId.match(userPost.user_id)) {
+    if (loginUserId === userPost.user_id) {
         const visibility: string = post.visibility || '';
         validVisibilityStatus(visibility);
         return await postDal.updatePostDAL(post, id);
@@ -144,7 +146,7 @@ export const updatePost = async (loginUserId: string, post: PostUpdate, id: stri
 export const deletePost = async (loginUserId: string, id: string) => {
     const userPost = await postDal.getPostByIdDAL(id);
 
-    if (loginUserId.match(userPost.user_id)) {
+    if (loginUserId === userPost.user_id) {
         await postDal.deletePost(id);
         //Khi xóa post => xóa comment của post đó
         await deleteAllComment(id);
@@ -179,7 +181,7 @@ const sendPostNotification = async (user_id: string, post: Post) => {
                     sender_id: user_id,
                     content: generateNotificationContent(notificationContent, user.username),
                     post_id: post.id,
-                    created_at: notification.created_at,
+                    created_at: dayjs(notification.created_at).format('YYYY-MM-DD HH:mm:ss'),
                     type: NotificationType.NEW_POST
                 });
                 console.log(`Notification sent to ${follower.user_id}`);

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as followDal from '../dal/follow.dal';
 import { validFollowStatus } from '../services/validate_input_payload.service';
 import * as userDal from '../dal/user.dal';
@@ -30,7 +31,6 @@ export const followUser = async (loginUserId: string, targetUserId: string) => {
     if (!existingFollow) {
         const targetUser = await userDal.getUserByIdDAL(targetUserId); // Lấy user để kiểm tra có phải private hay public
         const followStatus = targetUser.is_private ? 'PENDING' : 'APPROVED';
-        console.log(followStatus);
         validFollowStatus(followStatus);
 
         const follow = await followDal.followUserDAL(loginUserId, targetUserId, followStatus);
@@ -76,7 +76,6 @@ export const deleteFollower = async (loginUserId: string, targetUserId: string) 
 // Hàm hỗ trợ gửi thông báo 
 const sendFollowNotification = async (loginUserId: string, targetUserId: string, followId: string, followStatus: string) => {
     const user = await userDal.getUserByIdDAL(loginUserId);
-    console.log(followStatus)
     // Nội dung tin nhắn dựa vào status
     let notificationContent = '' as NotificationType;
     if (followStatus === 'PENDING') {
@@ -111,7 +110,7 @@ const sendFollowNotification = async (loginUserId: string, targetUserId: string,
             content: notification.content,
             follow_id: followId,
             status: followStatus,
-            created_at: notification.created_at,
+            created_at: dayjs(notification.created_at).format('YYYY-MM-DD HH:mm:ss'),
             type: notificationContent
         });
         console.log(`Notification sent to ${targetUserId}`);

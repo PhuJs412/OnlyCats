@@ -52,7 +52,6 @@ export const createComment = async (req: AuthRequest, res: Response) => {
     try {
         const loginUserId = req.user?.id || '';
         const { post_id, content } = req.body;
-        console.log('abc: ', req.user?.id)
         await commentService.createComment(loginUserId, post_id, content);
         res.status(200).json('ok');
     } catch (error) {
@@ -62,19 +61,22 @@ export const createComment = async (req: AuthRequest, res: Response) => {
 
 export const createReply = async (req: AuthRequest, res: Response) => {
     try {
-        const loginuserId = req.user?.id || '';
+        const loginUserId = req.user?.id || '';
         const { post_id, content, parent_comment_id } = req.body;
-        await commentService.createReply(loginuserId, post_id, content, parent_comment_id);
+
+        await commentService.createReply(loginUserId, post_id, content, parent_comment_id);
         res.status(200).json('ok');
     } catch (error) {
         res.status(500).json({ message: (error as Error).message });
     }
 };
 
-export const updateComment = async (req: Request, res: Response) => {
+export const updateComment = async (req: AuthRequest, res: Response) => {
     try {
+        const loginUserId = req.user?.id || '';
         const comment: CommentUpdate = req.body;
-        await commentService.updateComment(comment, req.params.comment_id);
+
+        await commentService.updateComment(loginUserId, comment, req.params.comment_id);
         res.status(200).json('ok');
     } catch (error) {
         res.status(500).json({ message: (error as Error).message });

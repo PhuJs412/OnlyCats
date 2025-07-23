@@ -216,7 +216,7 @@ export const updatePostSQL = (keys: string[]): string => {
 
 	const sql = `
     update posts
-        set ${clause}
+        set is_edited = TRUE, updated_at = CURRENT_TIMESTAMP, ${clause}
         where id = $${keys.length + 1}    
     `;
 	return sql.trim();
