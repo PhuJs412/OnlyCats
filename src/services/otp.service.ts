@@ -3,6 +3,7 @@ import * as otpDal from "../dal/otp.dal";
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { sendEmail } from "../utils/email";
+import { getUserByEmailDAL } from "../dal/user.dal";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
@@ -23,14 +24,21 @@ export const requestOTP = async (email: string) => {
     const nowDate: number = Number(Date.now());
     const expiresAt: string = dayjs(String(new Date(nowDate + 1 * 60 * 1000))).format('YYYY-MM-DD HH:mm:ss'); // Thời hạn OTP: 3 phút + format lại date cho đúng giá trị
     const otpCode = generateOTP();
+    console.log(email)
+    const user = await getUserByEmailDAL(email);
+    if(!user) throw new Error('User not found');
 
     await otpDal.createOTPDAL(email, otpCode, expiresAt);
 
     // Gửi mail 
-    const subject = 'Your OTP Code';
-    const html = `<p>Your OTP code is <strong> ${otpCode} </strong> <italic>(Don't share it to anyone selse)</italic>. It will expire in ${expireMinutes} minutes.</p>`;
-    await sendEmail(email, subject, html);
-    return { message: 'OTP sent successfully' };
+    try {
+        const subject = 'Your OTP Code';
+        const html = `<p>Your OTP code is <strong> ${otpCode} </strong> <italic>(Don't share it to anyone else)</italic>. It will expire in ${expireMinutes} minutes.</p>`;
+        await sendEmail(email, subject, html);
+        return { message: 'OTP sent successfully' };
+    } catch (error) {
+        throw new Error('Failed to send OTP email');
+    }
 };
 
 export const verifyOTP = async (email: string, otp: string) => {
