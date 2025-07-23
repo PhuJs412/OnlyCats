@@ -23,7 +23,6 @@ export const getNotificationsByUserIdSQL = `
             )
             and n.sender_id is NOT NULL
             and n.recipient_id is NOT NULL
-            and n.is_read = FALSE
             and n.is_deleted = FALSE
             and (
                 u.is_deleted = FALSE or
