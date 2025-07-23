@@ -56,8 +56,10 @@ export const createPost = async (req: AuthRequest, res: Response) => {
         if (!loginUserId) {
             res.status(401).json({ message: 'Unauthorized' });
         }
+        const mediaUrl = req.file?.path || ''; // Lấy đường dẫn media từ file upload
+
         const { content, media_url, visibility } = req.body;
-        await postService.createPostDAL(loginUserId, content, media_url, visibility);
+        await postService.createPostDAL(loginUserId, content, mediaUrl, visibility);
         res.status(200).json('Ok');
     } catch (error) {
         res.status(500).json({ message: (error as Error).message });
