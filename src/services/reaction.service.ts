@@ -9,7 +9,6 @@ import { createNotification } from './notification.service';
 import { getPostByIdDAL } from '../dal/post.dal';
 import { getCommentByIdDAL } from '../dal/comment.dal';
 import { validReactionType } from './validate_input_payload.service';
-import { Notification } from '../models/notification.model';
 
 //POSTS
 export const getAllReactionsByPostId = async (postId: string) => {
@@ -59,6 +58,7 @@ export const getExistedReactionByUserIdAndCommentId = async (userId: string, com
 }
 
 export const countReactionsByCommentId = async (commentId: string) => {
+    console.log('countReactionsByCommentId called with commentId:', commentId);
     const count = await reactionsDAL.countReactionsByCommentIdDAL(commentId);
     return count;
 }
