@@ -3,24 +3,6 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authenJWT.middleware';
 
 
-export const getReactionByUserIdAndType = async (req: AuthRequest, res: Response) => {
-    try {
-        const loginUserId = req.user?.id || '';
-        console.log('loginUserId', loginUserId);
-        if (!loginUserId) {
-            res.status(401).json({ message: 'Unauthorized' });
-        }
-        const reaction = await reactionService.getReactionByUserIdAndType(loginUserId, req.params.type);
-        if (!reaction) {
-            res.status(404).json({ message: 'No reaction found' });
-        } else {
-            res.status(200).json(reaction);
-        }
-    } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
-    }
-};
-
 // POSTS
 export const getAllReactionsByPostId = async (req: Request, res: Response) => {
     try {
@@ -82,7 +64,7 @@ export const getAllReactionsByCommentId = async (req: Request, res: Response) =>
 export const getAllReactionsByCommentIdAndType = async (req: Request, res: Response) => {
     try {
         const commentId = req.params.id;
-        const type = req.query.type as string;
+        const type = req.params.type as string;
         const reactions = await reactionService.getAllReactionsByCommentIdAndType(commentId, type);
         res.status(200).json(reactions);
     } catch (error) {
@@ -93,6 +75,7 @@ export const getAllReactionsByCommentIdAndType = async (req: Request, res: Respo
 export const countReactionsByCommentId = async (req: Request, res: Response) => {
     try {
         const commentId = req.params.id;
+        // console.log('commentId', commentId);
         const count = await reactionService.countReactionsByCommentId(commentId);
         res.status(200).json(count);
     } catch (error) {
@@ -103,7 +86,7 @@ export const countReactionsByCommentId = async (req: Request, res: Response) => 
 export const countReactionsByCommentIdAndType = async (req: Request, res: Response) => {
     try {
         const commentId = req.params.id;
-        const type = req.query.type as string;
+        const type = req.params.type as string;
         const count = await reactionService.countReactionsByCommentIdAndType(commentId, type);
         res.status(200).json(count);
     } catch (error) {
