@@ -19,12 +19,23 @@ export const getPostByIdDAL = async (id: string) => {
 };
 // END - login user
 
+//Follower
+export const getPostsByFollowerIdDAL = async (user_id: string) => {
+    const res = await pool.query(sql.getPostsForFollowerSQL, [user_id]);
+    return res.rows;
+};
+
+export const getPostByFollowerIdDAL = async (post_id: string, user_id: string) => {
+    const res = await pool.query(sql.getPostByFollowerIdSQL, [post_id, user_id]);
+    return res.rows[0];
+};
+// END - follower
+
 // Guest
 export const getPostsBySomeoneIdDAL = async (user_id: string) => {
     const res = await pool.query(sql.getPostsBySomeoneIdSQL, [user_id]);
     return res.rows;
 }
-
 
 export const getSomeonePostByIdDAL = async (id: string) => {
     const res = await pool.query(sql.getSomeonePostByIdSQL, [id]);
@@ -33,7 +44,7 @@ export const getSomeonePostByIdDAL = async (id: string) => {
 // END - guest
 
 export const countTotalSharedPostByIdDAL = async (id: string) => {
-    return await pool.query(sql.countShareByPostIdSQL, [id]);
+    return await pool.query(sql.countSharedPostByPostIdSQL, [id]);
 };
 
 export const createPostDAL = async (
@@ -43,7 +54,8 @@ export const createPostDAL = async (
     visibility: string
 ) => {
     const data = [user_id, content, media_url, visibility];
-    return await pool.query(sql.createPost, data);
+    const res = await pool.query(sql.createPost, data);
+    return res.rows[0];
 };
 
 export const createSharedPostDAL = async (
@@ -53,7 +65,8 @@ export const createSharedPostDAL = async (
     visibility: string
 ) => {
     const data = [user_id, shared_post_id, content, visibility];
-    return await pool.query(sql.createSharedPost, data);
+    const res = await pool.query(sql.createSharedPost, data);
+    return res.rows[0];
 };
 
 export const updatePostDAL = async (post: PostUpdate, id: string) => {

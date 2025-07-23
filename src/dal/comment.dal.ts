@@ -17,11 +17,6 @@ export const getRepliesByCommentIdDAL = async (comment_id: string) => {
     return res.rows;
 };
 
-export const getReplyByCommentIdDAL = async (comment_id: string) => {
-    const res = await pool.query(sql.getReplyByCommentIdSQL, [comment_id]);
-    return res.rows;
-};
-
 export const countCommentByPostIdDAL = async (post_id: string) => {
     const res = await pool.query(sql.countCommentByPostIdSQL, [post_id]);
     return res.rows;
@@ -38,7 +33,8 @@ export const createCommentDAL = async (
     content: string,
 ) => {
     const data = [user_id, post_id, content];
-    return await pool.query(sql.createCommentSQL, data);
+    const res = await pool.query(sql.createCommentSQL, data);
+    return res.rows[0];
 };
 
 export const createReplyDAL = async (
@@ -48,7 +44,8 @@ export const createReplyDAL = async (
     parent_comment_id: string // trường hợp trả lời comment thì lấy comment_id của cha và bỏ vào đây
 ) => {
     const data = [user_id, post_id, content, parent_comment_id];
-    return await pool.query(sql.createReplySQL, data);
+    const res = await pool.query(sql.createReplySQL, data);
+    return res.rows[0];
 };
 
 export const updateCommentDAL = async (comment: CommentUpdate, comment_id: string) => {

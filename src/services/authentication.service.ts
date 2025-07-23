@@ -43,7 +43,7 @@ export const loginUser = async (email: string, password: string): Promise<string
         const now = new Date();
 
         if (lockedAt) {
-            const diffMinutes = ((now.getTime() - lockedAt.getTime()) - 7 * 60 * 60 * 1000) / (1000 * 60); // tính giờ từ  thời gian hiện tại - lúc bị khóa và công thức đổi sang phút -> 1, 2, 3,... phút
+            const diffMinutes = ((now.getTime() - lockedAt.getTime()) - 7 * 60 * 60 * 1000) / (1000 * 60); // tính giờ từ thời gian hiện tại - lúc bị khóa và công thức đổi sang phút -> 1, 2, 3,... phút
             if (diffMinutes < LOCK_DURATION_MINUTES) {
                 throw new Error(`Account is locked. Try again in ${Math.ceil(LOCK_DURATION_MINUTES - diffMinutes)} minute(s).`);
             } else {
