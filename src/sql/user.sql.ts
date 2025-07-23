@@ -36,6 +36,28 @@ export const getUserByEmailSQL = `
     select id as user_id,
         username,
         email,
+        password,
+        bio,
+        gender,
+        dob,
+        address,
+        is_private,
+        avatar_url,
+        background_url,
+        last_login_at,
+        failed_login_attempt,
+        last_failed_attempt,
+        is_locked,
+        locked_at
+    from users 
+    where email = $1 
+        and is_deleted = FALSE
+        and is_abandoned = FALSE 
+        `;
+export const getUserByUsernameSQL = `
+    select id as user_id,
+        username,
+        email,
         bio,
         gender,
         dob,
@@ -45,11 +67,10 @@ export const getUserByEmailSQL = `
         background_url,
         last_login_at
     from users 
-    where email = $1 
+    where username = $1 
         and is_deleted = FALSE
         and is_abandoned = FALSE 
-        `;
-
+`;
 export const searchUserByUsername = `
     select id as user_id,
         username,

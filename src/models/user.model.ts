@@ -14,9 +14,6 @@ export interface User {
 
   last_login_at?: string | '';
 
-  otp_code?: string | '';
-  otp_expired_at?: string | '';
-
   failed_login_attempt?: number | '';
   last_failed_attempt?: string | '';
 
