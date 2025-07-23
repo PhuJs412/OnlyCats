@@ -24,7 +24,7 @@ export enum FollowStatus {
   PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',
   APPROVED = 'APPROVED',
-  CANCELLED = 'CANCELLED',
+  CANCELLED = 'CANCELED',
 }
 
 export enum NotificationType {
