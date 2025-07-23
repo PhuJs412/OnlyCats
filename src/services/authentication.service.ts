@@ -13,14 +13,13 @@ let token: string = '';
 
 //Register user
 export const registerUser = async (body: any): Promise<string> => {
-    try {
+    try {  
         const { id, username, email, password, gender, dob, avatar_url, background_url } = body; // lấy ra các field có trong body làm biến ( vừa biến vừa giá trị )
-        
+        console.log("Đăng ký user với body: ", body);
         await validUserInputPayload(id, username, email, gender, dob);
         validPasswordValue (password);
 
         const encryptedPassword = await bcrypt.hash(password, 10); //hash chuỗi password với độ phức tạp = 10. Vì cần bất đồng bộ để mã hóa => xài await 
-
         await createUserDAL(username, email, encryptedPassword, gender, dob, avatar_url, background_url);
         return 'Ok';
     } catch (error) {
@@ -30,10 +29,11 @@ export const registerUser = async (body: any): Promise<string> => {
 };
 
 export const loginUser = async (email: string, password: string): Promise<string> => {
+        console.log("Đăng nhập user với email: ", email);   
+
     const MAX_FAILED_ATTEMPTS = parseInt(process.env.MAX_FAILED_ATTEMPTS || '5');
     const LOCK_DURATION_MINUTES = parseInt(process.env.LOCK_DURATION_MINUTES || '5');
     const user = await getUserByEmailDAL(email);
-
     if (!user) throw new Error('Account does not exist!');
     const id = user.id;
 
