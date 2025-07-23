@@ -85,14 +85,13 @@ export const followUserSQL = `
 // Cập nhật lại trạng thái cho follow
 export const updateFollowStatusSQL = `
     update follows
-        set status = $3,
-            updated_at = CURRENT_TIMESTAMP
+        set status = $3, updated_at = CURRENT_TIMESTAMP
         where follower_id = $1
             and following_id = $2
     returning id
 `;
 
-// Xóa mềm của follow
+// Xóa mềm của follow - unfollow user đó
 export const deleteFollowerSQL = `
     update follows
         set is_deleted = TRUE,
