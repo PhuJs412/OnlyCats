@@ -4,5 +4,6 @@ export interface Follows {
     following_id: string,
 
     created_at?: string,
-    is_deleted?: string
+    is_deleted?: string,
+    status?: string
 };
