@@ -42,6 +42,13 @@ export const getUserByEmailDAL = async (
 ) => {
     const data = [email];
     const result = await pool.query(sql.getUserByEmailSQL, data);
+    //Tìm không thấy sẽ trả về null, tránh trả về undefined
+    return result.rows[0] || null; //Tìm không thấy sẽ trả về null, tránh trả về undefined
+};
+
+export const getUserbyUsernameDAL = async (username: string) => {
+    const data = [username];
+    const result = await pool.query(sql.getUserByUsernameSQL, data);
     return result.rows[0] || null; //Tìm không thấy sẽ trả về null, tránh trả về undefined
 };
 
