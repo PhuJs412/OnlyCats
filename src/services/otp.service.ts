@@ -24,7 +24,7 @@ export const requestOTP = async (email: string) => {
     const nowDate: number = Number(Date.now());
     const expiresAt: string = dayjs(String(new Date(nowDate + 1 * 60 * 1000))).format('YYYY-MM-DD HH:mm:ss'); // Thời hạn OTP: 3 phút + format lại date cho đúng giá trị
     const otpCode = generateOTP();
-    console.log(email)
+    
     const user = await getUserByEmailDAL(email);
     if(!user) throw new Error('User not found');
 

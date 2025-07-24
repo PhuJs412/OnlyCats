@@ -145,14 +145,9 @@ export const createSharedPost = async (
 };
 
 export const updatePost = async (loginUserId: string, post: PostUpdate, id: string) => {
-    const userPost = await postDal.getPostByIdDAL(id);
-
-    if (loginUserId === userPost.user_id) {
-        const visibility: string = post.visibility || '';
-        validVisibilityStatus(visibility);
-        return await postDal.updatePostDAL(post, id);
-    }
-    throw new Error('You do not have permission to update this post');
+    const visibility: string = post.visibility || '';
+    validVisibilityStatus(visibility);
+    return await postDal.updatePostDAL(post, id);
 };
 
 export const deletePost = async (loginUserId: string, id: string) => {
@@ -184,7 +179,6 @@ const sendPostNotification = async (user_id: string, post: Post) => {
                 comment_id: undefined,
                 follow_id: undefined
             });
-            console.log(`Notification created with : ${notification}`);
             try {
                 // Gửi thông báo qua Websocket tới follower
                 io.to(follower.user_id).emit("notification", {

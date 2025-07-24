@@ -61,7 +61,6 @@ export const createReactionDAL = async (
     commentId: string,
     type: string
 ) => {
-    console.log('Creating reaction with:', { userId, postId, commentId, type });
     const res = await pool.query(reactionSQL.createReactionSQL,
         [
             userId,
@@ -78,7 +77,6 @@ export const updatePostReactionTypeDAL = async (userId: string, postId: string, 
 };
 
 export const updateCommentReactionTypeDAL = async (userId: string, commentId: string, type: string) => {
-    console.log('Updating comment reaction type with:', { userId, commentId, type });
     return await pool.query(reactionSQL.updateCommentReactionTypeSQL, [userId, commentId, type]);
 };
 

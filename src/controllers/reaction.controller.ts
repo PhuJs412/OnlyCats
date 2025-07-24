@@ -17,7 +17,6 @@ export const getAllReactionsByPostId = async (req: Request, res: Response) => {
 export const getAllReactionsByPostIdAndType = async (req: Request, res: Response) => {
     try {
         const postId = req.params.id;
-        console.log(postId)
         const type = req.params.type;
         const reactions = await reactionService.getAllReactionsByPostIdAndType(postId, type);
         res.status(200).json(reactions);
@@ -29,7 +28,6 @@ export const getAllReactionsByPostIdAndType = async (req: Request, res: Response
 export const countReactionsByPostId = async (req: Request, res: Response) => {
     try {
         const postId = req.params.id;
-        console.log(req.params.id);
         const count = await reactionService.countReactionsByPostId(postId);
         res.status(200).json(count);
     } catch (error) {
@@ -41,7 +39,6 @@ export const countReactionsByPostIdAndType = async (req: Request, res: Response)
     try {
         const postId = req.params.id;
         const type = req.params.type as string;
-        console.log('postId', postId, 'type', type);
         const count = await reactionService.countReactionsByPostIdAndType(postId, type);
         res.status(200).json(count);
     } catch (error) {
@@ -75,7 +72,6 @@ export const getAllReactionsByCommentIdAndType = async (req: Request, res: Respo
 export const countReactionsByCommentId = async (req: Request, res: Response) => {
     try {
         const commentId = req.params.id;
-        // console.log('commentId', commentId);
         const count = await reactionService.countReactionsByCommentId(commentId);
         res.status(200).json(count);
     } catch (error) {

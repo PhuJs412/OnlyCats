@@ -70,7 +70,6 @@ export const updateFollowStatus = async (loginUserId: string, targetUserId: stri
 };
 
 export const deleteFollower = async (loginUserId: string, targetUserId: string) => {
-    console.log('deleteFollower', loginUserId, targetUserId);
     const existingFollow = await followDal.getFollowByUserIdsDAL(loginUserId, targetUserId);
     if (existingFollow) {
         return await followDal.deleteFollowerDAL(loginUserId, targetUserId);
