@@ -2,29 +2,25 @@ import bcrypt from 'bcrypt'; // Thư viện mã hóa password (hash ra để mã
 import jwt from 'jsonwebtoken'; // Thư viện tạo token cho user 
 import { createUserDAL, getUserByEmailDAL, saveUserDAL } from '../dal/user.dal';
 import { validUserInputPayload, validPasswordValue } from './validate_input_payload.service';
+import { ErrorMessage } from '../utils/errorEnums';
 
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-let userObj: any = {};
-
-let token: string = '';
-
 //Register user
-export const registerUser = async (body: any): Promise<string> => {
+export const registerUser = async (body: any): Promise<void> => {
     try {
         const { id, username, email, password, gender, dob, avatar_url, background_url } = body; // lấy ra các field có trong body làm biến ( vừa biến vừa giá trị )
-        
+
         await validUserInputPayload(id, username, email, gender, dob);
-        validPasswordValue (password);
+        validPasswordValue(password);
 
         const encryptedPassword = await bcrypt.hash(password, 10); //hash chuỗi password với độ phức tạp = 10. Vì cần bất đồng bộ để mã hóa => xài await 
 
         await createUserDAL(username, email, encryptedPassword, gender, dob, avatar_url, background_url);
-        return 'Ok';
     } catch (error) {
-        console.log("Lỗi đăng ký");
+        console.log(ErrorMessage.REGISTER_ERROR, error);
         throw error;
     }
 };
@@ -34,7 +30,7 @@ export const loginUser = async (email: string, password: string): Promise<string
     const LOCK_DURATION_MINUTES = parseInt(process.env.LOCK_DURATION_MINUTES || '5');
     const user = await getUserByEmailDAL(email);
 
-    if (!user) throw new Error('Account does not exist!');
+    if (!user) throw new Error(ErrorMessage.ACCOUNT_NOT_FOUND);
     const id = user.id;
 
     // Nếu bị khóa
@@ -55,7 +51,7 @@ export const loginUser = async (email: string, password: string): Promise<string
                 }, id);
             }
         } else {
-            throw new Error('Account is locked.');
+            throw new Error(ErrorMessage.ACCOUNT_LOCKED);
         }
     }
 
@@ -89,7 +85,13 @@ export const loginUser = async (email: string, password: string): Promise<string
     const token = jwt.sign(
         { id: user.id, email: user.email },
         process.env.JWT_SECRET!,
-        { expiresIn: '30d' }
+        {
+            expiresIn: '30d',
+            algorithm: 'HS256',
+            issuer: 'OnlyCats',
+            audience: 'OnlyCatsUsers',
+            subject: 'UserAuthenticationToken'
+        }
     );
 
     return token;

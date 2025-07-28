@@ -23,6 +23,7 @@ export const authenticateJWT: RequestHandler = (req, res, next) => {
         };
         // ép lại kiểu cho req nếu cần
         (req as AuthRequest).user = { id: decoded.id, email: decoded.email };
+        
         next();
     } catch (err) {
         res.status(403).json({ message: 'Invalid token' });

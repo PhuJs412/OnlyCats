@@ -1,6 +1,6 @@
-import { getPostByIdDAL } from "../dal/post.dal";
+import { getPostByIdDAL } from "../../dal/post.dal";
 import { Response, NextFunction } from "express";
-import { AuthRequest } from "./authenJWT.middleware";
+import { AuthRequest } from "../authenJWT.middleware";
 
 export const checkPostOwner = async (req: AuthRequest, res: Response, next: NextFunction) => {
     const postId = req.params.id;

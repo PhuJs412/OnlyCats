@@ -1,16 +1,16 @@
 import * as reactionService from '../services/reaction.service';
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authenJWT.middleware';
-
+import { formatResponse } from '../utils/responseFormat';
 
 // POSTS
 export const getAllReactionsByPostId = async (req: Request, res: Response) => {
     try {
         const postId = req.params.id;
         const reactions = await reactionService.getAllReactionsByPostId(postId);
-        res.status(200).json(reactions);
+        res.status(200).json(formatResponse(200, undefined, reactions));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 };
 
@@ -19,9 +19,9 @@ export const getAllReactionsByPostIdAndType = async (req: Request, res: Response
         const postId = req.params.id;
         const type = req.params.type;
         const reactions = await reactionService.getAllReactionsByPostIdAndType(postId, type);
-        res.status(200).json(reactions);
+        res.status(200).json(formatResponse(200, undefined, reactions));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 };
 
@@ -29,9 +29,9 @@ export const countReactionsByPostId = async (req: Request, res: Response) => {
     try {
         const postId = req.params.id;
         const count = await reactionService.countReactionsByPostId(postId);
-        res.status(200).json(count);
+        res.status(200).json(formatResponse(200, undefined, count));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 };
 
@@ -40,9 +40,9 @@ export const countReactionsByPostIdAndType = async (req: Request, res: Response)
         const postId = req.params.id;
         const type = req.params.type as string;
         const count = await reactionService.countReactionsByPostIdAndType(postId, type);
-        res.status(200).json(count);
+        res.status(200).json(formatResponse(200, undefined, count));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 };
 // ** END - POSTS **
@@ -52,9 +52,9 @@ export const getAllReactionsByCommentId = async (req: Request, res: Response) =>
     try {
         const commentId = req.params.id;
         const reactions = await reactionService.getAllReactionsByCommentId(commentId);
-        res.status(200).json(reactions);
+        res.status(200).json(formatResponse(200, undefined, reactions));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 };
 
@@ -63,9 +63,9 @@ export const getAllReactionsByCommentIdAndType = async (req: Request, res: Respo
         const commentId = req.params.id;
         const type = req.params.type as string;
         const reactions = await reactionService.getAllReactionsByCommentIdAndType(commentId, type);
-        res.status(200).json(reactions);
+        res.status(200).json(formatResponse(200, undefined, reactions));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 };
 
@@ -73,9 +73,9 @@ export const countReactionsByCommentId = async (req: Request, res: Response) => 
     try {
         const commentId = req.params.id;
         const count = await reactionService.countReactionsByCommentId(commentId);
-        res.status(200).json(count);
+        res.status(200).json(formatResponse(200, undefined, count));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 };
 
@@ -84,9 +84,9 @@ export const countReactionsByCommentIdAndType = async (req: Request, res: Respon
         const commentId = req.params.id;
         const type = req.params.type as string;
         const count = await reactionService.countReactionsByCommentIdAndType(commentId, type);
-        res.status(200).json(count);
+        res.status(200).json(formatResponse(200, undefined, count));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 };
 // ** END - COMMENTS **
@@ -94,15 +94,12 @@ export const countReactionsByCommentIdAndType = async (req: Request, res: Respon
 
 export const createReaction = async (req: AuthRequest, res: Response) => {
     try {
-        const loginUserId = req.user?.id || '';
-        if (!loginUserId) {
-            res.status(401).json({ message: 'Unauthorized' });
-        }
+
         const { postId, commentId, type } = req.body;
-        await reactionService.createReaction(loginUserId, postId, commentId, type);
-        res.status(200).json('Ok');
+        await reactionService.createReaction( req.user!.id, postId, commentId, type);
+        res.status(200).json(formatResponse(200));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 }
 
@@ -110,8 +107,8 @@ export const deleteReaction = async (req: Request, res: Response) => {
     try {
         const reactionId = req.params.id;
         await reactionService.deleteReaction(reactionId);
-        res.status(200).json('Ok');
+        res.status(200).json(formatResponse(200));
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
+        res.status(500).json(formatResponse(500, (error as Error).message));
     }
 }

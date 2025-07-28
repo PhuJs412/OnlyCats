@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import router from './routes';
 import bodyParser from 'body-parser'; // Hỗ trợ parse JSON hoặc form data
-import { notFound, errorHandler } from './middleware/handle_error.middleware';
+import { notFound } from './middleware/handleNotFoundError.middleware';
 import http from "http";
 import { initSocket } from "./socket/socket";
 
@@ -23,6 +23,5 @@ app.use('/onlycats', router);
 
 //Xử lý cuối cùng
 app.use(notFound);
-app.use(errorHandler);
 
-export {app, server};
+export { app, server };

@@ -4,6 +4,8 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { sendEmail } from "../utils/email";
 import { getUserByEmailDAL } from "../dal/user.dal";
+import { ErrorMessage } from "../utils/errorEnums";
+
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
@@ -24,9 +26,9 @@ export const requestOTP = async (email: string) => {
     const nowDate: number = Number(Date.now());
     const expiresAt: string = dayjs(String(new Date(nowDate + 1 * 60 * 1000))).format('YYYY-MM-DD HH:mm:ss'); // Thời hạn OTP: 3 phút + format lại date cho đúng giá trị
     const otpCode = generateOTP();
-    
+
     const user = await getUserByEmailDAL(email);
-    if(!user) throw new Error('User not found');
+    if (!user || user.length === 0) throw new Error(ErrorMessage.USER_NOT_FOUND);
 
     await otpDal.createOTPDAL(email, otpCode, expiresAt);
 
@@ -35,17 +37,18 @@ export const requestOTP = async (email: string) => {
         const subject = 'Your OTP Code';
         const html = `<p>Your OTP code is <strong> ${otpCode} </strong> <italic>(Don't share it to anyone else)</italic>. It will expire in ${expireMinutes} minutes.</p>`;
         await sendEmail(email, subject, html);
-        return { message: 'OTP sent successfully' };
+        return;
     } catch (error) {
-        throw new Error('Failed to send OTP email');
+        throw new Error(ErrorMessage.FAILED_SEND_OTP);
     }
 };
 
 export const verifyOTP = async (email: string, otp: string) => {
     const otpRecord = await otpDal.validOTPDAL(email, otp);
-    if (!otpRecord || otpRecord.length === 0) throw new Error('Invalid or Expired OTP'); // Hết hạn 3 phút || đã nhập thành công => Không dùng được || Không cho xài lại
+
+    if (!otpRecord || otpRecord.length === 0) throw new Error(ErrorMessage.INVALID_OR_EXPIRED_OTP); // Hết hạn 3 phút || đã nhập thành công => Không dùng được || Không cho xài lại
     await otpDal.updateOTPStatusDAL(otpRecord.otp_id);
 
-    return { message: 'OTP verified successfully' };
+    return;
 }
 
