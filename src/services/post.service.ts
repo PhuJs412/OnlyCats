@@ -7,14 +7,16 @@ import { validVisibilityStatus } from './validate_input_payload.service';
 import { deleteAllComment } from './comment.service';
 import { createNotification } from './notification.service';
 import { generateNotificationContent } from './notification.service';
-import { NotificationType } from '../utils/enums';
+import { NotificationType } from '../utils/validInputEnums';
 import { getIO } from '../socket/socket';
 import { Post } from '../models/post.model';
 import { Follows } from '../models/follow.model';
+import { ErrorMessage } from '../utils/errorEnums';
+import { FollowStatus } from '../utils/validInputEnums';
 
 export const getAllPost = async () => {
     const posts = await postDal.getAllPostDAL();
-    if (!posts || posts.length === 0) throw new Error('No post is existed!');
+    if (!posts || posts.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
     return posts;
 };
 
@@ -23,12 +25,12 @@ export const getPostsByUserId = async (loginUserId: string, user_id: string) => 
     const followObj: Follows = await getFollowByUserIdsDAL(loginUserId, user_id);
 
     const userObj = await getUserByIdDAL(user_id);
-    if (!userObj) throw new Error('User not found!');
+    if (!userObj) throw new Error(ErrorMessage.USER_NOT_FOUND);
 
     // Nếu login user là bản thân => Cho phép xem các bài viết của mình
     if (loginUserId === (user_id)) {
         const posts = await postDal.getPostsByMyselfIdDAL(user_id);
-        if (!posts || posts.length === 0) throw new Error('post is not available!');
+        if (!posts || posts.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
         return posts;
     }
 
@@ -36,12 +38,12 @@ export const getPostsByUserId = async (loginUserId: string, user_id: string) => 
     if (userObj.is_private) {
 
         // Phải thỏa 2 điều kiện: trong danh sách follow và được accept
-        if (followObj && followObj.follower_id === loginUserId && followObj?.status === 'ACCEPTED' && !followObj?.is_deleted) {
+        if (followObj && followObj.follower_id === loginUserId && followObj?.status === FollowStatus.ACCEPTED && !followObj?.is_deleted) {
             const posts = await postDal.getPostsByFollowerIdDAL(user_id);
-            if (!posts || posts.length === 0) throw new Error('post is not available!');
+            if (!posts || posts.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
             return posts;
         } else {
-            throw new Error('This profile is private!');
+            throw new Error(ErrorMessage.POST_NOT_FOUND);
         }
 
         // Tài khoản public
@@ -50,13 +52,13 @@ export const getPostsByUserId = async (loginUserId: string, user_id: string) => 
         // Nếu user có trong danh sách follower của login user -> cho phép xem post với visibility != private
         if (followObj && followObj.follower_id === loginUserId) {
             const posts = await postDal.getPostsByFollowerIdDAL(user_id);
-            if (!posts || posts.length === 0) throw new Error('post is not available!');
+            if (!posts || posts.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
             return posts;
         }
 
         // Nếu là người khác => Chỉ cho các bài public
         const posts = await postDal.getPostsBySomeoneIdDAL(user_id);
-        if (!posts || posts.length === 0) throw new Error('post is not available!');
+        if (!posts || posts.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
         return posts;
     }
 };
@@ -67,33 +69,33 @@ export const getPostById = async (loginUserId: string, post_id: string) => {
     const followObj = await getFollowByUserIdsDAL(loginUserId, post.user_id);
 
     const userObj = await getUserByIdDAL(post.user_id);
-    if (!userObj) throw new Error('User not found!');
+    if (!userObj) throw new Error(ErrorMessage.USER_NOT_FOUND);
 
     if (loginUserId === post.user_id) {
-        if (!post || post.length === 0) throw new Error('post is not available!');
+        if (!post || post.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
         return post;
     }
 
     if (userObj.is_private) {
 
-        if (followObj && followObj.follower_id === loginUserId && followObj?.status === 'ACCEPTED' && !followObj?.is_deleted) {
+        if (followObj && followObj.follower_id === loginUserId && followObj?.status === FollowStatus.ACCEPTED && !followObj?.is_deleted) {
             const post = await postDal.getPostByFollowerIdDAL(post_id, loginUserId);
-            if (!post || post.length === 0) throw new Error('post is not available!');
+            if (!post || post.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
             return post;
         } else {
-            throw new Error('post is not available!');
+            throw new Error(ErrorMessage.POST_NOT_FOUND);
         }
 
     } else {
 
         if (followObj && followObj === loginUserId && !followObj?.is_deleted) {
             const post = await postDal.getPostByFollowerIdDAL(post_id, loginUserId);
-            if (!post || post.length === 0) throw new Error('post is not available!');
+            if (!post || post.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
             return post;
         }
 
         const someOnePost = await postDal.getSomeonePostByIdDAL(post_id);
-        if (!someOnePost || someOnePost.length === 0) throw new Error('post is not available!');
+        if (!someOnePost || someOnePost.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
         return someOnePost;
     }
 };
@@ -116,7 +118,7 @@ export const createPostDAL = async (
     validVisibilityStatus(visibility);
 
     const post = await postDal.createPostDAL(user_id, content, media_url, visibility);
-    if (!post || post.length === 0) throw new Error('Failed to create post record');
+    if (!post || post.length === 0) throw new Error(ErrorMessage.FAILED_CREATE_POST);
 
     await sendPostNotification(user_id, post);
     return;
@@ -133,26 +135,23 @@ export const createSharedPost = async (
 
     //Kiểm tra trước khi share, post đó có tồn tại hay không
     const post = await postDal.getPostByIdDAL(shared_post_id);
-    if (!post || post.length === 0) throw new Error('No origin post has found');
+    if (!post || post.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
 
     if (post.visibility === 'public') {
         const sharedPost = await postDal.createSharedPostDAL(user_id, shared_post_id, content, visibility);
-        if (!sharedPost || sharedPost.length === 0) throw new Error('Failed to create shared post record');
+        if (!sharedPost || sharedPost.length === 0) throw new Error(ErrorMessage.FAILED_CREATE_SHARED_POST);
         await sendPostNotification(user_id, sharedPost);
         return;
     }
-    throw new Error('You can only share public posts');
+    throw new Error(ErrorMessage.NO_PERMISSION_TO_ACCESS_POST);
 };
 
 export const updatePost = async (loginUserId: string, post: PostUpdate, id: string) => {
-    const userPost = await postDal.getPostByIdDAL(id);
+    const visibility: string = post.visibility || '';
 
-    if (loginUserId === userPost.user_id) {
-        const visibility: string = post.visibility || '';
-        validVisibilityStatus(visibility);
-        return await postDal.updatePostDAL(post, id);
-    }
-    throw new Error('You do not have permission to update this post');
+    validVisibilityStatus(visibility);
+    
+    return await postDal.updatePostDAL(post, id);
 };
 
 export const deletePost = async (loginUserId: string, id: string) => {
@@ -164,7 +163,7 @@ export const deletePost = async (loginUserId: string, id: string) => {
         await deleteAllComment(id);
         return;
     }
-    throw new Error('You do not have permission to delete this post');
+    throw new Error(ErrorMessage.NO_PERMISSION_TO_ACCESS_POST);
 };
 
 const sendPostNotification = async (user_id: string, post: Post) => {
@@ -184,7 +183,6 @@ const sendPostNotification = async (user_id: string, post: Post) => {
                 comment_id: undefined,
                 follow_id: undefined
             });
-            console.log(`Notification created with : ${notification}`);
             try {
                 // Gửi thông báo qua Websocket tới follower
                 io.to(follower.user_id).emit("notification", {

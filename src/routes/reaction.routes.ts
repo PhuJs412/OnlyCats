@@ -1,6 +1,5 @@
 import * as reactionController from '../controllers/reaction.controller';
 import { Router } from 'express';
-import { authenticateJWT } from '../middleware/authenJWT.middleware';
 
 const router = Router();
 
@@ -17,7 +16,7 @@ router.get('/comment-count/:id', reactionController.countReactionsByCommentId);
 router.get('/comment-count/:id/:type', reactionController.countReactionsByCommentIdAndType);
 
 // Create reaction
-router.post('/create', authenticateJWT, reactionController.createReaction);
+router.post('/create', reactionController.createReaction);
 
 // Delete reaction
 router.delete('/delete/:id', reactionController.deleteReaction);

@@ -1,8 +1,9 @@
 import dayjs from 'dayjs';
 import * as notificationDal from "../dal/notification.dal";
 import { Notification } from "../models/notification.model";
-import { NotificationType } from "../utils/enums";
-import { ReactionType } from "../utils/enums";
+import { NotificationType } from "../utils/validInputEnums";
+import { ReactionType } from "../utils/validInputEnums";
+import { ErrorMessage } from '../utils/errorEnums';
 
 export const getNotificationsByUserId = async (recipient_id: string): Promise<Notification[]> => {
     const notifications: Notification[] = await notificationDal.getNotificationsByUserIdDAL(recipient_id);
@@ -17,9 +18,9 @@ export const countNonReadedNotification = async (recipient_id: string): Promise<
 export const createNotification = async (notification: Notification): Promise<Notification> => {
     const { recipient_id, sender_id, content, post_id, comment_id, follow_id, created_at } = notification;
     // Kiểm tra các field quan trọng
-    if (!recipient_id) throw new Error('Recipient ID is required');
-    if (!sender_id) throw new Error('Sender ID is required');
-    if (!content) throw new Error('Notification content is required');
+    if (!recipient_id) throw new Error(ErrorMessage.RECIPIENT_ID_REQUIRED);
+    if (!sender_id) throw new Error(ErrorMessage.SENDER_ID_REQUIRED);
+    if (!content) throw new Error(ErrorMessage.CONTENT_NOTIFICATION_REQUIRED);
 
     try {
         const createdNotification = await notificationDal.createNotificationDAL(
@@ -32,7 +33,7 @@ export const createNotification = async (notification: Notification): Promise<No
         );
 
         if (!createdNotification || !createdNotification.id) {
-            throw new Error('Failed to create notification');
+            throw new Error(ErrorMessage.FAILED_CREATE_NOTIFICATION);
         }
 
         return createdNotification;
