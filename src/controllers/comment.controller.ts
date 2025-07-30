@@ -3,7 +3,7 @@ import * as commentService from '../services/comment.service';
 import { CommentUpdate } from '../models/comment.update.model';
 import { AuthRequest } from '../middleware/authenJWT.middleware';
 import { formatResponse } from "../utils/responseFormat";
-import { SuccessfulEnums } from '../utils/successfulEnums';
+import { SuccessfulEnums } from '../enums/successfulEnums';
 
 export const getAllCommentByPostId = async (req: Request, res: Response) => {
     try {

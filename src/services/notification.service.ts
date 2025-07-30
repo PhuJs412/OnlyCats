@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import * as notificationDal from "../dal/notification.dal";
 import { Notification } from "../models/notification.model";
-import { NotificationType } from "../utils/validInputEnums";
-import { ReactionType } from "../utils/validInputEnums";
-import { ErrorMessage } from '../utils/errorEnums';
+import { NotificationType } from "../enums/validInputEnums";
+import { ReactionType } from "../enums/validInputEnums";
+import { ErrorMessage } from '../enums/errorEnums';
 
 export const getNotificationsByUserId = async (recipient_id: string): Promise<Notification[]> => {
     const notifications: Notification[] = await notificationDal.getNotificationsByUserIdDAL(recipient_id);

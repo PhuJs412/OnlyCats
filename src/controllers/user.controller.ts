@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import * as userService from '../services/user.service';
 import { UserUpdate } from '../models/user.update.model';
 import { formatResponse } from '../utils/responseFormat';
-import { SuccessfulEnums } from '../utils/successfulEnums';
+import { SuccessfulEnums } from '../enums/successfulEnums';
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {

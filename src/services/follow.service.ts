@@ -2,11 +2,11 @@ import dayjs from 'dayjs';
 import * as followDal from '../dal/follow.dal';
 import { validFollowStatus } from '../services/validate_input_payload.service';
 import * as userDal from '../dal/user.dal';
-import { NotificationType } from '../utils/validInputEnums';
+import { NotificationType } from '../enums/validInputEnums';
 import { generateNotificationContent, createNotification } from './notification.service';
 import { getIO } from '../socket/socket';
-import { ErrorMessage } from '../utils/errorEnums';
-import { FollowStatus } from '../utils/validInputEnums';
+import { ErrorMessage } from '../enums/errorEnums';
+import { FollowStatus } from '../enums/validInputEnums';
 
 export const getAllFollowerUser = async (targetUserId: string) => {
     const followerUser = await followDal.getAllFollowerDAL(targetUserId);

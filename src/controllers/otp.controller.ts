@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { formatResponse } from "../utils/responseFormat";
 import * as otpService from "../services/otp.service";
-import { SuccessfulEnums } from "../utils/successfulEnums";
+import { SuccessfulEnums } from "../enums/successfulEnums";
 
 export const sendOTP = async (req: Request, res: Response) => {
     try {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { loginUser, registerUser } from '../services/authentication.service';
 import { formatResponse } from '../utils/responseFormat';
-import { SuccessfulEnums } from '../utils/successfulEnums';
+import { SuccessfulEnums } from '../enums/successfulEnums';
 
 export const registerController = async (req: Request, res: Response) => {
   try {

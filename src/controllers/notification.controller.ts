@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AuthRequest } from "../middleware/authenJWT.middleware";
 import * as notificationService from "../services/notification.service";
 import { formatResponse } from "../utils/responseFormat";
-import { ErrorMessage } from "../utils/errorEnums";
+import { ErrorMessage } from "../enums/errorEnums";
 
 export const getNotificationsByUserId = async (req: AuthRequest, res: Response) => {
     try {

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { getUserByEmailDAL, getUserbyUsernameDAL } from '../dal/user.dal';
-import { FollowStatus, Gender, Visibility, ReactionType } from '../utils/validInputEnums';
-import { ErrorMessage } from '../utils/errorEnums';
+import { FollowStatus, Gender, Visibility, ReactionType } from '../enums/validInputEnums';
+import { ErrorMessage } from '../enums/errorEnums';
 
 // Kiểm tra giá trị đầu vào user
 export const validUserInputPayload = async (id: string, username: string, email: string, gender: string, dob: string) => {

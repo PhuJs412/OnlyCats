@@ -6,7 +6,7 @@ export interface PostUpdate {
 
     shared_post_id?: string,
     content?: string,
-    media_url?: string,
+    media_url?: string[],
     is_edited?: boolean,
 
     updated_at?: string | null;

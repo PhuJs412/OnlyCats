@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as followService from '../services/follow.service';
 import { AuthRequest } from "../middleware/authenJWT.middleware";
 import { formatResponse } from "../utils/responseFormat";
-import { SuccessfulEnums } from "../utils/successfulEnums";
+import { SuccessfulEnums } from "../enums/successfulEnums";
 
 export const getAllFollowerUser = async (req: Request, res: Response) => {
     try {

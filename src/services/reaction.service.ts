@@ -2,14 +2,14 @@ import dayjs from 'dayjs';
 import * as reactionsDAL from '../dal/reaction.dal';
 import { Reactions } from '../models/reactions.model';
 import { generateNotificationContent } from './notification.service';
-import { NotificationType, ReactionType } from '../utils/validInputEnums';
+import { NotificationType, ReactionType } from '../enums/validInputEnums';
 import { getUserByIdDAL } from '../dal/user.dal';
 import { getIO } from '../socket/socket';
 import { createNotification } from './notification.service';
 import { getPostByIdDAL } from '../dal/post.dal';
 import { getCommentByIdDAL } from '../dal/comment.dal';
 import { validReactionType } from './validate_input_payload.service';
-import { ErrorMessage } from '../utils/errorEnums';
+import { ErrorMessage } from '../enums/errorEnums';
 
 //POSTS
 export const getAllReactionsByPostId = async (postId: string) => {

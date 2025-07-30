@@ -3,7 +3,8 @@ import * as postService from '../services/post.service';
 import { PostUpdate } from "../models/post.update.model";
 import { AuthRequest } from "../middleware/authenJWT.middleware";
 import { formatResponse } from "../utils/responseFormat";
-import { SuccessfulEnums } from "../utils/successfulEnums";
+import { SuccessfulEnums } from "../enums/successfulEnums";
+import { ErrorMessage } from "../enums/errorEnums";
 
 export const getAllPost = async (req: Request, res: Response) => {
     try {
@@ -43,10 +44,14 @@ export const countTotalSharedPostById = async (req: Request, res: Response) => {
 
 export const createPost = async (req: AuthRequest, res: Response) => {
     try {
-        const mediaUrl = req.file?.path || ''; // Lấy đường dẫn media từ file upload
+        const files = req.files as Express.Multer.File[]; // Lấy mảng file
+        const media = files ? files.map(file => file.path) : []; // Lấy mảng url 
+
+        if (!files || files.length === 0) throw new Error(ErrorMessage.FILE_NOT_FOUND);
+
         const { content, visibility } = req.body;
 
-        await postService.createPostDAL(req.user!.id, content, mediaUrl, visibility);
+        await postService.createPostDAL(req.user!.id, content, media, visibility);
         res.status(200).json(formatResponse(200, SuccessfulEnums.POST_CREATED));
     } catch (error) {
         res.status(500).json(formatResponse(500, (error as Error).message));
@@ -65,8 +70,14 @@ export const createSharedPost = async (req: AuthRequest, res: Response) => {
 
 export const updatePost = async (req: AuthRequest, res: Response) => {
     try {
-        const Post: PostUpdate = req.body;
-        await postService.updatePost(req.user!.id, Post, req.params.id);
+        const files = req.files as Express.Multer.File[]; // Lấy mảng file
+        const media = files ? files.map(file => file.path) : []; // Lấy mảng url 
+
+        if (!files || files.length === 0) throw new Error(ErrorMessage.FILE_NOT_FOUND);
+
+        const { content, visibility } = req.body;
+
+        await postService.updatePost(req.user!.id, content, media, visibility, req.params.id);
         res.status(200).json(formatResponse(200, SuccessfulEnums.UPDATE_COMMENT));
     } catch (error) {
         res.status(500).json(formatResponse(500, (error as Error).message));

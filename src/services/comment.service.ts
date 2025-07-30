@@ -3,12 +3,12 @@ import * as commentDal from '../dal/comment.dal';
 import { CommentUpdate } from '../models/comment.update.model';
 import { getPostByIdDAL } from '../dal/post.dal';
 import { getIO } from '../socket/socket';
-import { NotificationType } from '../utils/validInputEnums';
+import { NotificationType } from '../enums/validInputEnums';
 import { generateNotificationContent } from './notification.service';
 import { createNotification } from './notification.service';
 import { Comments } from '../models/comment.model';
 import { getUserByIdDAL } from '../dal/user.dal';
-import { ErrorMessage } from '../utils/errorEnums';
+import { ErrorMessage } from '../enums/errorEnums';
 
 export const getAllCommentByPostId = async (post_id: string) => {
     const comments = await commentDal.getAllCommentByPostIdDAL(post_id);

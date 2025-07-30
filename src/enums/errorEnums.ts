@@ -71,5 +71,11 @@ export enum ErrorMessage {
     FAILED_SEND_OTP = 'Failed to send OTP',
 
     // Socket.io
-    SOCKET_IO_NOT_FOUND = 'Socket IO instance not available'
+    SOCKET_IO_NOT_FOUND = 'Socket IO instance not available',
+
+    // Cloudinary
+    FILE_NOT_FOUND = 'No files uploaded, proceeding with empty media array',
+
+    // Server
+    INTERNAL_SERVER_ERROR = 'Internal server error'
 };

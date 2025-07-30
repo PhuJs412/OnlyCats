@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { sendEmail } from "../utils/email";
 import { getUserByEmailDAL } from "../dal/user.dal";
-import { ErrorMessage } from "../utils/errorEnums";
+import { ErrorMessage } from "../enums/errorEnums";
 
 dotenv.config();
 

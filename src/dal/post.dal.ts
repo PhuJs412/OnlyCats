@@ -50,11 +50,10 @@ export const countTotalSharedPostByIdDAL = async (id: string) => {
 export const createPostDAL = async (
     user_id: string,
     content: string,
-    media_url: string,
+    media_url: string[],
     visibility: string
 ) => {
-    const data = [user_id, content, media_url, visibility];
-    const res = await pool.query(sql.createPost, data);
+    const res = await pool.query(sql.createPost, [user_id, content, media_url, visibility]);
     return res.rows[0];
 };
 

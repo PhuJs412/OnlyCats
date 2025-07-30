@@ -2,17 +2,17 @@ import dayjs from 'dayjs';
 import * as postDal from '../dal/post.dal';
 import { getUserByIdDAL } from '../dal/user.dal';
 import { getFollowByUserIdsDAL, getAllFollowerDAL } from '../dal/follow.dal';
-import { PostUpdate } from '../models/post.update.model';
 import { validVisibilityStatus } from './validate_input_payload.service';
 import { deleteAllComment } from './comment.service';
 import { createNotification } from './notification.service';
 import { generateNotificationContent } from './notification.service';
-import { NotificationType } from '../utils/validInputEnums';
+import { NotificationType } from '../enums/validInputEnums';
 import { getIO } from '../socket/socket';
 import { Post } from '../models/post.model';
 import { Follows } from '../models/follow.model';
-import { ErrorMessage } from '../utils/errorEnums';
-import { FollowStatus } from '../utils/validInputEnums';
+import { ErrorMessage } from '../enums/errorEnums';
+import { FollowStatus } from '../enums/validInputEnums';
+import { Visibility } from '../enums/validInputEnums';
 
 export const getAllPost = async () => {
     const posts = await postDal.getAllPostDAL();
@@ -102,7 +102,7 @@ export const getPostById = async (loginUserId: string, post_id: string) => {
 
 export const countTotalSharedPostByIdL = async (id: string) => {
     const post = await postDal.getPostByIdDAL(id);
-    if (post.visibility === 'public') {
+    if (post.visibility === Visibility.PUBLIC) {
         const countSharedPost = await postDal.countTotalSharedPostByIdDAL(id);
         return countSharedPost.rows;
     } return 0;
@@ -111,7 +111,7 @@ export const countTotalSharedPostByIdL = async (id: string) => {
 export const createPostDAL = async (
     user_id: string,
     content: string,
-    media_url: string,
+    media_url: string[],
     visibility: string
 ) => {
 
@@ -137,7 +137,7 @@ export const createSharedPost = async (
     const post = await postDal.getPostByIdDAL(shared_post_id);
     if (!post || post.length === 0) throw new Error(ErrorMessage.POST_NOT_FOUND);
 
-    if (post.visibility === 'public') {
+    if (post.visibility === Visibility.PUBLIC) {
         const sharedPost = await postDal.createSharedPostDAL(user_id, shared_post_id, content, visibility);
         if (!sharedPost || sharedPost.length === 0) throw new Error(ErrorMessage.FAILED_CREATE_SHARED_POST);
         await sendPostNotification(user_id, sharedPost);
@@ -146,11 +146,16 @@ export const createSharedPost = async (
     throw new Error(ErrorMessage.NO_PERMISSION_TO_ACCESS_POST);
 };
 
-export const updatePost = async (loginUserId: string, post: PostUpdate, id: string) => {
-    const visibility: string = post.visibility || '';
+export const updatePost = async (loginUserId: string, content: string, mediaUrl: string[], visibility: string, id: string) => {
+    const post = {
+        content: content,
+        media_url: mediaUrl,
+        visibility: visibility,
+        id: id
+    }
 
     validVisibilityStatus(visibility);
-    
+
     return await postDal.updatePostDAL(post, id);
 };
 
